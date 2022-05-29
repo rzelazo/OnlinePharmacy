@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block head_title %}
+  Cart
+{% endblock head_title %}
+
+{% block extra_head %}
+  <style>
+    td {
+      text-align: center;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <h1 class="display-3">Your cart:</h1>
+  {% if cart_item_list|length > 0 %}
+  {% for cart_item in cart_item_list %}
+  <div class="row">
+    <table class="table align-items-center">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category/Subcategories</th>
+          <th>Form</th>
+          <th>Net weight</th>
+          <th>Manufacturer</th>
+          <th>Description</th>
+          <th>Number of pieces</th>
+          <th>Price</th>
+          <th style="width: 20%">Image</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ cart_item.item.name }}</td>
+          <td>{{ cart_item.item.subcategories.all|join:",<br>" }}</td>
+          <td>{{ cart_item.item.get_form_display }}</td>
+          <td>{{ cart_item.item.net_weight }} g</td>
+          <td>{{ cart_item.item.manufacturer }}</td>
+          <td>{{ cart_item.item.description }}</td>
+          <td>{{ cart_item.n_pieces }}</td>
+          <td style="width: 10%">
+            {% if cart_item.item.price_sale %}
+              <del>{{ cart_item.item.price }}</del>
+              <br>
+              <p><strong style="font-size: 1.2em;">{{ cart_item.item.price_sale }}
+              </strong><span class="badge bg-primary">sale</span>
+              </p>
+            {% else %}
+              {{ cart_item.item.price }}
+            {% endif %}
+          </td>
+          <td style="width: 20%">
+            <img src="{{ cart_item.item.image.url }}" alt="item_image" style="max-width: 50%;">
+          </td>
+          <td>
+            <form method="post" action="{% url 'core:cart-remove' cart_item.item.pk %}">
+              {% csrf_token %}
+            <input type="submit" value="Remove from cart" class="btn btn-danger">
+      </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  {% endfor %}
+    <div class="row justify-content-end">
+      <div class="col-lg-2">
+        <h3>Total price: {{ total_price }}</h3>
+      </div>
+      <div class="col-lg-2">
+        <a class="btn btn-primary" href="{% url 'core:checkout' %}">To checkout</a>
+      </div>
+    </div>
+  {% else %}
+  <h1>There are no items in your cart!</h1>
+  {% endif %}
+{% endblock content %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block head_title %}
+  Item detail
+{% endblock head_title %}
+
+{% block extra_head %}
+  <style>
+    td {
+      text-align: center;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <table class="table align-items-center">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category/Subcategories</th>
+          <th>Form</th>
+          <th>Net weight</th>
+          <th>Manufacturer</th>
+          <th>Description</th>
+          <th>In stock</th>
+          <th>Price</th>
+          <th>Image</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ item.subcategories.all|join:",<br>" }}</td>
+          <td>{{ item.get_form_display }}</td>
+          <td>{{ item.net_weight }} g</td>
+          <td>{{ item.manufacturer }}</td>
+          <td>{{ item.description }}</td>
+          <td>{{ item.in_stock }}</td>
+          <td style="width: 10%">
+            {% if item.price_sale %}
+              <del>{{ item.price }}</del>
+              <br>
+              <p><strong style="font-size: 1.2em;">{{ item.price_sale }}
+              </strong><span class="badge bg-primary">sale</span>
+              </p>
+            {% else %}
+              {{ item.price }}
+            {% endif %}
+          </td>
+          <td>
+            <img src="{{ item.image.url }}" alt="item_image" style="max-width: 50%;">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="row justify-content-end">
+    <div class="col-4">
+      <form method="post" action="">
+          {% csrf_token %}
+          {{ form.as_p }}
+        <input type="submit" value="Add to cart" class="btn btn-success">
+      </form>
+    </div>
+  </div>
+{% endblock content %}
