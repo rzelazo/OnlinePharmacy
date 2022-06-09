@@ -9,9 +9,52 @@ from django.core.validators import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
+from django.conf import settings
+import logging
 
 
-class ItemListView(LoginRequiredMixin, ListView):
+def get_or_create_cart(request):
+    """
+    Helper function for retrieving an existing Cart instance or creating a new one.
+    :return: tuple(cart: Cart instance, created: boolean flag - True if new cart was created else False)
+    """
+    user = request.user
+    session_key = request.session.session_key
+    if session_key is None:
+        # if session_key is None then session is not in database -> create new session and retrieve new session_key
+        request.session.create()
+        session_key = request.session.session_key
+
+    if user.is_authenticated:
+        # if user is logged in -> try to retrieve current Cart instance based on current session_key
+        try:
+            cart = Cart.objects.get(session=session_key)
+            # cart assigned to session become associated with the logged-in user
+            cart.user = user
+            cart.save()
+            created = False
+
+        except ObjectDoesNotExist:
+            # if the cart associated with session does not exist, try to get a Cart instance already associated with the user
+            # or create a new Cart instance and bind it to the user
+            cart, created = Cart.objects.get_or_create(user=user)
+            # associate the current session with the cart
+            cart.session = session_key
+            cart.save()
+
+    else:
+        cart, created = Cart.objects.get_or_create(session=session_key)
+
+        if settings.DEBUG:
+            if not created:
+                logging.debug("Cart fetched - session_id: " + session_key)
+            else:
+                logging.debug("Cart created - session_id: " + session_key)
+
+    return cart, created
+
+
+class ItemListView(ListView):
     model = Item
     template_name = 'core/index.html'
     context_object_name = 'item_list'
@@ -23,7 +66,7 @@ class ItemListView(LoginRequiredMixin, ListView):
         return self.model.objects.all().order_by('name')
 
 
-class ItemDetailView(LoginRequiredMixin, View):
+class ItemDetailView(View):
     template_name = 'core/item_detail.html'
 
     def get(self, request, pk):
@@ -39,9 +82,7 @@ class ItemDetailView(LoginRequiredMixin, View):
         item = get_object_or_404(Item, pk=pk)  # get item instance by primary key lookup
         form = AddItemToCartForm(request.POST)  # get user input from form
 
-        customer = get_object_or_404(Customer, user=request.user)
-        # get current customer's Cart instance or create one
-        cart, created = Cart.objects.get_or_create(customer=customer)
+        cart, created = get_or_create_cart(request)
         # create CartItem instance and use it to bind the cart with the item
         if form.is_valid():
             try:
@@ -80,11 +121,12 @@ class ItemDetailView(LoginRequiredMixin, View):
                           context={'item': item, 'form': form})
 
 
-class CartView(LoginRequiredMixin, View):
+class CartView(View):
     template_name = 'core/cart.html'
 
     def get(self, request):
-        cart = Cart.objects.get_or_create(customer=request.user.customer)[0]
+        cart, created = get_or_create_cart(request)
+
         cart_item_list = CartItem.objects.filter(cart=cart).order_by('item__name')
 
         total_price = sum(cart_item.item.price_sale * cart_item.n_pieces if cart_item.item.price_sale is not None
@@ -95,10 +137,11 @@ class CartView(LoginRequiredMixin, View):
         return render(request, template_name=self.template_name, context=context)
 
 
-class RemoveFromCartView(LoginRequiredMixin, View):
+class RemoveFromCartView(View):
 
     def post(self, request, pk):
-        cart, created = Cart.objects.get_or_create(customer=request.user.customer)
+        cart, created = get_or_create_cart(request)
+
         if created:
             raise Http404("Item not in the cart")
 

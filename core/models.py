@@ -68,11 +68,14 @@ class Item(models.Model):
 
 
 class Cart(models.Model):
-    customer = models.OneToOneField(to='Customer', on_delete=models.CASCADE)
+    user = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
+                                help_text="User account associated with this cart (null if user is not logged in)")
+    session = models.CharField(max_length=32, null=True,
+                               help_text="Session ID used to maintain cart if the user is not logged in")
     items = models.ManyToManyField(to='Item', through='CartItem', help_text="Items that are in the cart")
 
     def __str__(self):
-        return f"{self.customer}'s cart"
+        return f"{self.user if self.user is not None else 'Anonymous user'}'s cart"
 
 
 class CartItem(models.Model):

@@ -42,6 +42,12 @@
         <a class="nav-link" href="{% url 'core:checkout' %}">Checkout</a>
       </li>
 
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'core:cart' %}">
+          <i class="fas fa-shopping-cart" style="padding-left: 20px; padding-right: 20px; font-size: 1.2em"></i>
+        </a>
+      </li>
+
       <!--Following links are rendered only if the user is logged in-->
       {% if user.is_authenticated %}
         <!-- Show link to admin panel only if user is an administrator-->
@@ -51,20 +57,15 @@
         </li>
         {% endif %}
 
-        <!-- Show link to cart only if the user is a customer-->
-        {% if user.customer %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'core:cart' %}">
-            <i class="fas fa-shopping-cart" style="padding-left: 20px; padding-right: 20px; font-size: 1.2em"></i>
-          </a>
+          <a class="nav-link text-danger" href="{% url 'account_logout' %}">Sign out</a>
         </li>
-        {% endif %}
-
+    {% else %}
         <li class="nav-item">
-          <a class="nav-link text-danger" href="{% url 'account_logout' %}">Logout</a>
+          <a class="nav-link text-success" href="{% url 'account_login' %}">Sign in</a>
         </li>
-      </ul>
     {% endif %}
+      </ul>
   </div>
 
 </nav>
