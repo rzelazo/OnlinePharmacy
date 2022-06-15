@@ -1,0 +1,44 @@
+{% extends "account/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+
+
+
+
+<form class="login" method="POST" action="{% url 'account_login' %}" style="text-align: center;
+width: 450px; box-shadow: 0 0 10px 0 rgb(192, 237, 166); padding: 20px;
+border-radius: 15px; margin: 8% auto 0; margin-top: 2%; background-color: rgba(247, 204, 172, 0.25)">
+  <h1 style="font-weight: bold; font-size: 2.2rem; color:#FFB085; letter-spacing: 2px; padding: 0 0 15px 0;
+  border-bottom: 1px solid slategrey">Zaloguj się</h1>
+  <br>
+  <br>
+  {% csrf_token %}
+  <a style="letter-spacing: 1px;">{{ form.as_p }}</a>
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+  {% endif %}
+  <a class="button secondaryAction" href="{% url 'account_reset_password' %}" style="color: royalblue">{% trans "Forgot Password?" %}</a>
+  <br>
+  <br>
+  <button class="primaryAction" type="submit" style="border-radius: 20px; width: 130px; border-color: #C0EDA6;
+      background: #F7CCAC; height: 30px">Zaloguj się</button>
+  <hr style="margin-top: 10%">
+  <label>LUB</label>
+  <br>
+  <br>
+  <a href="{% url 'account_signup'%}">
+    <button class="third Button" type="button"  style="border-radius: 20px; width: 130px;
+        background: #F7CCAC; height: 30px; border-color: #C0EDA6">Zarejestruj się</button>
+  </a>
+</form>
+<br>
+{% endblock %}
+
+</html>
