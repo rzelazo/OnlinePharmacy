@@ -143,6 +143,9 @@
         <a  href="#" href="#" class="plus">+</a>
       </div>
       {% csrf_token %}
+      <div style="display: none">
+        {{ form.as_p }}
+      </div>
       <input type="submit" value="Dodaj do koszyka" class="btn btn-outline-dark" id="add">
    </form>
 
@@ -175,57 +178,7 @@
     <br>
 </div>
 <hr>
-  <!-- <div class="row">
-    <table class="table align-items-center">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Category/Subcategories</th>
-          <th>Form</th>
-          <th>Net weight</th>
-          <th>Manufacturer</th>
-          <th>Description</th>
-          <th>In stock</th>
-          <th>Price</th>
-          <th>Image</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ item.name }}</td>
-          <td>{{ item.subcategories.all|join:",<br>" }}</td>
-          <td>{{ item.get_form_display }}</td>
-          <td>{{ item.net_weight }} g</td>
-          <td>{{ item.manufacturer }}</td>
-          <td>{{ item.description }}</td>
-          <td>{{ item.in_stock }}</td>
-          <td style="width: 10%">
-            {% if item.price_sale %}
-              <del>{{ item.price }}</del>
-              <br>
-              <p><strong style="font-size: 1.2em;">{{ item.price_sale }}
-              </strong><span class="badge bg-primary">sale</span>
-              </p>
-            {% else %}
-              {{ item.price }}
-            {% endif %}
-          </td>
-          <td>
-            <img src="{{ item.image.url }}" alt="item_image" style="max-width: 50%;">
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="row justify-content-end">
-    <div class="col-4">
-      <form method="post" action="">
-          {% csrf_token %}
-          {{ form.as_p }}
-        <input type="submit" value="Add to cart" class="btn btn-success">
-      </form>
-    </div>
-  </div> -->
+ 
 
   <script>
     const plus = document.querySelector(".plus"),
@@ -235,16 +188,18 @@
     let a = 1;
 
     plus.addEventListener("click", ()=>{
-      a++;
-      num.innerText = a;
-      console.log(a);
+      if(a<=99) {
+        a++;
+        num.innerText = a;
+        document.getElementById("id_n_pieces").value = a;
+      }
     });
 
     minus.addEventListener("click", ()=>{
       if(a>1) {
         a--;
         num.innerText = a;
-        console.log(a);
+        document.getElementById("id_n_pieces").value = a;
       }
     });
   </script>
