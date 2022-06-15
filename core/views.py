@@ -60,10 +60,18 @@ class ItemListView(ListView):
     context_object_name = 'item_list'
 
     def get_queryset(self):
-        """
-        Sorting items alphabetically.
-        """
-        return self.model.objects.all().order_by('name')
+
+        return self.model.objects.all()[:4]
+
+
+class KafelkiItemListView(ListView):
+    model = Item
+    template_name = 'core/kafelki.html'
+    context_object_name = 'item_list'
+
+    def get_queryset(self):
+
+        return self.model.objects.all()
 
 
 class ItemDetailView(View):

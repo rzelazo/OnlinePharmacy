@@ -11,7 +11,8 @@ urlpatterns = [
     path('<int:pk>/detail/', views.ItemDetailView.as_view(), name="detail"),
     path('cart/', views.CartView.as_view(), name='cart'),
     path('cart/remove/<int:pk>/', views.RemoveFromCartView.as_view(), name='cart-remove'),
-    path('checkout/', TemplateView.as_view(template_name='core/checkout.html'), name='checkout')
+    path('checkout/', TemplateView.as_view(template_name='core/checkout.html'), name='checkout'),
+    path('kafelki/', views.KafelkiItemListView.as_view(), name='kafelki'),
 ]
 
 if settings.DEBUG:
