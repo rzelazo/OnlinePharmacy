@@ -48,47 +48,46 @@
      color: #C0EDA6
  }
 
- #nav2 {
-      background-color: white !important;
-      font-family: Arial;
-      border-bottom:solid 3px #C0EDA6;
-    }
+#nav2 {
+  background-color: white !important;
+  font-family: Arial;
+  border-bottom:solid 3px #C0EDA6;
+}
 
-    #nav2 a {
-      font-size: 18px;
-      color: #9d9d9d;
-      text-decoration: none;
-      text-align: center;
-      background-color: white;
-    }
-    
-    #nav2 a:hover {
-      color: #C0EDA6;
-    }
-    
-    .dropdown-menu {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      width: 100%;
-      perspective: 1000px;
-      background-color: white;
-      display: none;
-    }
+#nav2 a {
+  font-size: 18px;
+  color: #9d9d9d;
+  text-decoration: none;
+  text-align: center;
+  background-color: white;
+}
 
-    .dropdown-item:hover {
-      color: white;
-      background-color: #e3e3e3;
-    }
- #drop a{
+#nav2 a:hover {
+  color: #C0EDA6;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  perspective: 1000px;
+  background-color: white;
+  display: none;
+}
+
+.dropdown-item:hover {
+  color: white;
+  background-color: #e3e3e3;
+}
+.drop a{
   color: #9d9d9d;
   align-items: center;
  }
 
-#drop {
+.drop {
    align-self:right;
    align-content: right;
-
  }
  .dropdown-menu {
       position: absolute;
@@ -154,52 +153,23 @@
 
 <nav class="navbar navbar-expand-lg bg-light justify-content-center" id="nav2">
   <ul class="navbar-nav">
+    {% for category in categories %}
 
     <li class="nav-item dropdown" style="padding-left: 70px; padding-right:70px ">
       <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-        ZDROWIE
+        {{ category.name | upper }}
       </a>
-<!--       <ul class="dropdown-menu dropdown-menu-center" id="drop">
-        <li><a class="dropdown-item" href="#">Ból</a> 
-        </li>
-        <li><a class="dropdown-item" href="#">Alergia</a> 
-        </li>
-        <li><a class="dropdown-item" href="#">Przeziębienie</a>
-        </li>
-        <li><a class="dropdown-item" href="#">Witaminy i suplementy diety</a> 
-        </li>
-      </ul> -->
-      <div id="drop" class="dropdown-menu" id="zdrowiedrop">
-        <a class="dropdown-item" th:href="#">Ból</a>
-        <a class="dropdown-item" th:href="#">Alergia</a>
-        <a class="dropdown-item" th:href="#">Przeziębienie</a>
-        <a class="dropdown-item" th:href="#">Witaminy i suplementy diety</a>
-        <a class="dropdown-item" th:href="#">Zielarnia</a>
+
+      <div class="dropdown-menu drop">
+      {% for subcategory in category.subcategory_set.all %}
+        <a class="dropdown-item" href="{% url 'core:category-filtered' subcategory.pk %}">{{ subcategory.name }}</a>
+      {% endfor %}
+
       </div>
     </li>
 
-    <li class="nav-item dropdown"  style="padding-left: 75px; padding-right:75px ">
-      <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-        HIGIENA
-      </a>
-      <div id="drop" class="dropdown-menu">
-        <a class="dropdown-item" th:href="#">Twarz</a>
-        <a class="dropdown-item" th:href="#">Ciało</a>
-        <a class="dropdown-item" th:href="#">Higiena jamy ustnej</a>
-        <a class="dropdown-item" th:href="#">Dezynfekcja</a>
-      </div>
-    </li>
+    {% endfor %}
 
-    <li class="nav-item dropdown"  style="padding-left: 55px; padding-right: 55px ">
-      <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-        PIELĘGNACJA
-      </a>
-      <div id="drop" class="dropdown-menu">
-        <a class="dropdown-item" th:href="#">Twarz</a>
-        <a class="dropdown-item" th:href="#">Ciało</a>
-        <a class="dropdown-item" th:href="#">Włosy</a>
-      </div>
-    </li>
     </ul>
 </nav>
 

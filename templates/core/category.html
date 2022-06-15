@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  {% if item_list %}
+      <div class="d-flex p-3 align-items-center" style="background-color: white; border-top:solid 1px #cccccc;">
+      {% for item in item_list %}
+        <div class="p2 flex-fill  justify-content-center">
+          <figure>
+            <img src="{{ item.image.url }}" alt="article_image {{ item.name }}" style="width: 50%">
+          </figure>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="d-flex p-3 bg-light justify-content-around"  style="background-color: white !important">
+      {% for item in item_list %}
+        <div class="p2 flex-fill">
+          <figure>
+            <figcaption><a class="item_link" href="{% url 'core:detail' item.pk %}">{{ item.name }}</a></figcaption>
+          </figure>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+{% endblock %}

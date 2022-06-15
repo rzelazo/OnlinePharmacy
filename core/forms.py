@@ -1,6 +1,4 @@
 from django import forms
-from django.core.validators import ValidationError
-from .models import CartItem
 
 
 class AddItemToCartForm(forms.Form):

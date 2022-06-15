@@ -13,6 +13,7 @@ urlpatterns = [
     path('cart/remove/<int:pk>/', views.RemoveFromCartView.as_view(), name='cart-remove'),
     path('checkout/', TemplateView.as_view(template_name='core/checkout.html'), name='checkout'),
     path('kafelki/', views.KafelkiItemListView.as_view(), name='kafelki'),
+    path('category/<int:pk>/', views.CategoryFilteredView.as_view(), name='category-filtered'),
 ]
 
 if settings.DEBUG:

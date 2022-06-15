@@ -163,3 +163,15 @@ class RemoveFromCartView(View):
             raise Http404("Item not in the cart")
 
         return redirect(to=reverse('core:cart'))
+
+
+class CategoryFilteredView(ItemListView):
+    model = Item
+    template_name = "core/category.html"
+    context_object_name = "item_list"
+
+    def get_queryset(self):
+        """
+        Filter items on subcategory id.
+        """
+        return self.model.objects.filter(subcategories=self.kwargs['pk'])
