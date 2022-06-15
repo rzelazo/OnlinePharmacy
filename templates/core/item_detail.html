@@ -9,11 +9,171 @@
     td {
       text-align: center;
     }
+
+    #links {
+      padding: 20px;
+      color: #9d9d9d;
+    }
+
+    #links a{
+      color: #9d9d9d;
+      text-decoration: none;
+    }
+
+    #links a:hover{
+      color:#C0EDA6;
+    }
+
+    /* #links a::after {
+     content: '';
+     display: inline-block;
+     width: 0px;
+     height: 2px;
+     background: #C0EDA6;
+     transition: 0.4s
+ }
+
+ #links a:hover::after {
+     width: 100%;
+     color: #C0EDA6;
+ } */
+
+  #name {
+    color:#4C4C4C;
+    /* border-bottom: solid 1px #9d9d9d */
+
+  }
+
+  #price {
+    font-size: 26px;
+    content: "";
+  }
+
+  #line {
+    width:40%;
+    margin-left: 30% !important;
+    margin-right: 30% !important;
+    color: #FF8340;
+    height:2px
+  }
+
+  .wrapper {
+    height:50px;
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: solid 2px #C0EDA6;
+    border-radius:30px;
+  }
+
+  /* #FFE0D0    to jest ta brzoskwinka */
+  .wrapper span {
+    width:100%;
+    text-align: center;
+    font-size:22px;
+  }
+
+  .wrapper span.num{
+    pointer-events: none;
+    cursor: pointer;
+  }
+
+  #add {
+    font-size: 22px;
+    color: black !important;
+    border: solid 2px #C0EDA6;
+    width: 400px;
+    height: 50px;
+    border-radius:30px;
+  }
+
+  #add:hover {
+    background-color: #C0EDA6 !important;
+    color: white !important;
+  }
+
+  #add:focus, #add:active {
+    box-shadow: none !important;
+    background-color: #C0EDA6 !important;
+  }
   </style>
 {% endblock %}
 
 {% block content %}
+
+<div class="row" >
+    <span  id="links">
+      <a class="uppercase" href="{% url 'core:index' %}">Home > </a>
+      <a>Kategoria > </a>
+      <a>Podkategoria > </a>
+      <a href="#">{{ item.name}}</a>
+  </span>
+</div>
+
+<div class="container" style="padding-top:40px;">
   <div class="row">
+  <div class="col">
+    <img src="{{ item.image.url }}" alt="item_image" style="width: 65%; padding-top:40px">
+  </div>
+
+  <div class="col text-center" >
+    <h2 id="name"> {{ item.name }}</h2>
+   <div style="padding-top: 20px">
+    <hr id="line">
+    <p  id="price">            
+      {% if item.price_sale %}
+      <del style="font-size: 18px;">{{ item.price }} zł  </del>
+        <strong style="padding-left:10px; font-size:26px; font-weight:normal">{{ item.price_sale }} zł</strong>
+
+
+    {% else %}
+      {{ item.price }} zł
+    {% endif %}</p>
+    <hr id="line">
+   </div>
+
+    <form class="d-flex justify-content-around" method="post" action="" style="padding-top:50px">
+      <div class="wrapper">
+        <span class="minus">-</span>
+        <span class="num">1</span>
+        <span class="plus">+</span>
+      </div>
+      {% csrf_token %}
+      <input type="submit" value="Dodaj do koszyka" class="btn btn-outline-dark" id="add">
+   </form>
+
+  </div>
+  
+</div>
+</div>
+<p style="margin-top:100px; margin-left: 60px; color: #4C4C4C; font-size: 30px">O produkcie</p>
+<hr>
+<div class="container" style=" color: #4C4C4C; ">
+    <strong style="font-size: 18px">Opis</strong>
+    <p>{{ item.description }} Opis powienien byz zdecydowanie dłyzszy, ponieważ nie zapelnia teraz calego containera i brzydko to wygląda. Zatem jest to do zmiany</p>
+    <br>
+    <strong style="font-size: 18px">Skład</strong>
+    <p>Tu powinnismy chyba miec sklad a nie widze go w bazie pzdr</p>
+    <br>
+    <strong style="font-size: 18px">Masa netto</strong>
+    <p>{{ item.net_weight }} g</p>
+    <br>
+    <div class=" d-flex justify-content-between">
+      <div class="col">
+    <strong style="font-size: 18px">Forma leku</strong>
+    <p>{{ item.get_form_display }}</p>
+  </div>
+  <div class="col" style="text-align:right; ">
+    <strong  style="font-size: 18px">Producent</strong>
+    <p>{{ item.manufacturer }}</p>
+  </div>
+  </div>
+    <br>
+</div>
+<hr>
+  <!-- <div class="row">
     <table class="table align-items-center">
       <thead>
         <tr>
@@ -63,5 +223,31 @@
         <input type="submit" value="Add to cart" class="btn btn-success">
       </form>
     </div>
-  </div>
+  </div> -->
+
+  <script>
+    const plus = document.querySelector(".plus"),
+    minus = document.querySelector(".minus"),
+    num = document.querySelector(".num");
+
+    let a = 1;
+
+    plus.addEventListener("click", ()=>{
+      a++;
+      num.innerText = a;
+      console.log(a);
+    });
+
+    minus.addEventListener("click", ()=>{
+      if(a>1) {
+        a--;
+        num.innerText = a;
+        console.log(a);
+      }
+    });
+  </script>
+
+  {% block extra_scripts %}
+  
+  {% endblock extra_scripts %}
 {% endblock content %}
