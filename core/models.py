@@ -38,11 +38,16 @@ class Manufacturer(models.Model):
 class Item(models.Model):
     TABLETS = 'TAB'
     SYRUP = 'SYR'
-    GEL = 'GEL'
+    GEL = 'G'
+    ML = 'ML'
+    H = 'H'
+
     FORM_CHOICES = (
-        (TABLETS, 'tablets'),
-        (SYRUP, 'syrup'),
-        (GEL, 'gel')
+        (TABLETS, 'Tabletki'),
+        (SYRUP, 'Syrop'),
+        (GEL, 'Żel'),
+        (ML, 'Płyn'),
+        (H, 'Saszetki')
     )
 
     name = models.CharField(max_length=60, help_text="Name of the product")
