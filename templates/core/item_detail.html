@@ -69,10 +69,12 @@
   }
 
   /* #FFE0D0    to jest ta brzoskwinka */
-  .wrapper span {
+  .wrapper a, .wrapper span {
     width:100%;
     text-align: center;
     font-size:22px;
+    color: black;
+    text-decoration: none;
   }
 
   .wrapper span.num{
@@ -136,9 +138,9 @@
 
     <form class="d-flex justify-content-around" method="post" action="" style="padding-top:50px">
       <div class="wrapper">
-        <span class="minus">-</span>
+        <a href="#" class="minus" >-</a>
         <span class="num">1</span>
-        <span class="plus">+</span>
+        <a  href="#" href="#" class="plus">+</a>
       </div>
       {% csrf_token %}
       <input type="submit" value="Dodaj do koszyka" class="btn btn-outline-dark" id="add">
