@@ -127,14 +127,16 @@ Item detail
 
 {% block content %}
 
+{% for subcategory in item.subcategories.all %}
 <div class="row">
   <span id="links">
-    <a class="uppercase" href="{% url 'core:index' %}">Home > </a>
-    <a>Kategoria > </a>
-    <a>Podkategoria> </a>
-    <a href="#">{{ item.name}}</a>
+    <a class="uppercase" href="{% url 'core:index' %}">Strona główna > </a>
+    <a>{{ subcategory.category.name }} > </a>
+    <a href="{% url 'core:category-filtered' subcategory.pk %}">{{ subcategory.name }} > </a>
+    <a href="{% url 'core:detail' item.pk %}">{{ item.name}}</a>
   </span>
 </div>
+{% endfor %}
 
 <div class="container" style="padding-top:40px;">
   <div class="row">
