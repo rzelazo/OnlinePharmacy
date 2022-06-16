@@ -1,42 +1,42 @@
 {% extends 'base.html' %}
 
 {% block head_title %}
-  Index
+Index
 {% endblock head_title %}
 
 {% block extra_head %}
-  <style>
-      a.item_link:link {
-          font-family: Helvetica, sans-serif;
-          font-size: 1.5em;
-          text-decoration: none;
-          color: rgb(76, 76, 76);
-      }
+<style>
+  a.item_link:link {
+    font-family: Helvetica, sans-serif;
+    font-size: 1.5em;
+    text-decoration: none;
+    color: rgb(76, 76, 76);
+  }
 
-      a.item_link:visited {
-          color: rgb(76, 76, 76);
-      }
+  a.item_link:visited {
+    color: rgb(76, 76, 76);
+  }
 
-      a.item_link:hover {
-          color: rgb(111, 111, 111);
-      }
+  a.item_link:hover {
+    color: rgb(111, 111, 111);
+  }
 
-      a.item_link:hover {
-          color: rgb(134, 134, 134);
-      }
+  a.item_link:hover {
+    color: rgb(134, 134, 134);
+  }
 
-      .carousel {
-        width: 70%;
-        margin: auto;
-        padding-top: 10px;
-        padding-bottom: 50px;
-      }
+  .carousel {
+    width: 70%;
+    margin: auto;
+    padding-top: 10px;
+    padding-bottom: 50px;
+  }
 
-      .p2 {
-        text-align: center;
-      }
+  .p2 {
+    text-align: center;
+  }
 
-      #leki {
+  #leki {
     padding-left: 30px;
     padding-right: 30px;
   }
@@ -128,7 +128,7 @@
     padding-bottom: 5px;
     border: 2px solid #C0EDA6;
   }
-  </style>
+</style>
 {% endblock extra_head %}
 
 
@@ -136,41 +136,40 @@
 {% block content %}
 
 
-  <div id="carouselExampleInterval" class="carousel slide" data-ride="carousel">
-    <div class="carousel-inner">
-      <div class="carousel-item active" data-interval="10000">
-        <img src="/static/img/slajd1.jpg" class="d-block w-100" alt="...">
-      </div>
-      <div class="carousel-item" data-interval="2000">
-        <img src="/static/img/slajd2.jpg" class="d-block w-100" alt="...">
-      </div>
-      <div class="carousel-item">
-        <img src="/static/img/slajd3.png" class="d-block w-100" alt="...">
-      </div>
-      <div class="carousel-item">
-        <img src="/static/img/slajd4.png" class="d-block w-100" alt="...">
-      </div>
-      <div class="carousel-item">
-        <img src="/static/img/slajd5.png" class="d-block w-100" alt="...">
-      </div>
+<div id="carouselExampleInterval" class="carousel slide" data-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active" data-interval="10000">
+      <img src="/static/img/slajd1.jpg" class="d-block w-100" alt="...">
     </div>
-    <a class="left carousel-control-prev" href="#carouselExampleInterval" role="button" data-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="sr-only">Previous</span>
-    </a>
-    <a class="right carousel-control-next" href="#carouselExampleInterval" role="button" data-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="sr-only">Next</span>
-    </a>
+    <div class="carousel-item" data-interval="2000">
+      <img src="/static/img/slajd2.jpg" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="/static/img/slajd3.png" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="/static/img/slajd4.png" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="/static/img/slajd5.png" class="d-block w-100" alt="...">
+    </div>
   </div>
+  <a class="left carousel-control-prev" href="#carouselExampleInterval" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control-next" href="#carouselExampleInterval" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
 
-  <p style="color: #8a8a8a; font-size: 30px">Polecane produkty</p>
+<p style="color: #8a8a8a; font-size: 30px; padding-bottom: 20px; border-bottom:solid 1px #cccccc;">Polecane produkty</p>
 
 <div id="leki">
   {% if item_list %}
   <div class="d-flex p-3" style="background-color: white; flex: auto;">
     {% for item in item_list %}
-    <!-- <div class="row" style="flex: auto;"> -->
     <div class="d-flex flex-column justify-content-center" id="col">
       <div class="box">
         <div style="align-items: center;">
@@ -205,18 +204,15 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script>
-$('.carousel').carousel({
-  interval: 2000
-});
-$(".left").click(function(){
+  $('.carousel').carousel({
+    interval: 2000
+  });
+  $(".left").click(function () {
     $(".carousel").carousel("prev");
   });
-  $(".right").click(function(){
+  $(".right").click(function () {
     $(".carousel").carousel("next");
   });
 </script>
 {% endblock extra_scripts %}
 {% endblock content %}
-
-
-
