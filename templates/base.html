@@ -134,7 +134,11 @@
         <!-- Show link to admin panel only if user is an administrator-->
         {% if user.is_staff %}
         <li class="nav-item">
-          <a class="nav-link text-secondary" href="{% url 'admin:index' %}">Panel administratora</a>
+          <a class="nav-link" href="{% url 'admin:index' %}">Panel administratora</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'core:user' %}">Moje konto</a>
         </li>
         {% endif %}
 

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <p>Nazwa użytkownika: {{ user.username }}</p>
+  {% if user.email %}
+  <p>Adres email: {{ user.email }}</p>
+  {% else %}
+  <p>Adres email: brak</p>
+  {% endif %}
+
+  <h3 class="display-3">Dane klienta:</h3>
+  {% if customer %}
+    <form action="" method="post">
+    {% csrf_token %}
+    <table>
+
+    {{ customer_form.as_table }}
+
+    </table>
+    <input type="submit" value="Zatwierdź" class="btn btn-outline-dark" id="confirm">
+    </form>
+  {% else %}
+  <h4>Brak danych</h4>
+  {% endif %}
+
+  <hr>
+  <h3 class="display-3">Historia zamówień:</h3>
+    <table class="table table-striped">
+      {% for order in orders %}
+        <tr>
+          <th>Nr. zamównienia</th>
+          <th>Data</th>
+          <th>Status</th>
+        </tr>
+        <tr>
+          <td># {{ order.id }}</td>
+          <td>{{ order.date.isoformat }}</td>
+          <td>{{ order.status }}</td>
+        </tr>
+        <tr>
+         <th>Produkt</th>
+         <th>Cena</th>
+         <th>Liczba sztuk</th>
+        </tr>
+        {% for order_item in order.orderitem_set.all %}
+        <tr>
+          <td>
+            {{ order_item.item.name }}
+          </td>
+          <td>
+            {% if order_item.item.price_sale %}
+              {{ order_item.item.price_sale }}
+            {% else %}
+              {{ order_item.item.price }}
+            {% endif %}
+          </td>
+          <td>
+            {{ order_item.n_pieces }}
+          </td>
+        </tr>
+        {% endfor %}
+      {% endfor %}
+    </table>
+  </h3>
+
+{% endblock %}

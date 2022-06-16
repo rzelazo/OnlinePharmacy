@@ -4,7 +4,7 @@ from django.views.generic import ListView, DetailView
 from .models import *
 from django.contrib import messages
 from django.urls import reverse
-from .forms import AddItemToCartForm, CheckoutForm
+from .forms import *
 from django.core.validators import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -127,7 +127,7 @@ class ItemDetailView(View):
                               context={'item': item, 'form': form})
 
             messages.add_message(request, level=messages.SUCCESS,
-                                 message=f"{item.name} pomyślnie umieszczony w koszyku")
+                                 message=f"Dodano do koszyka: {cart_item}")
 
             return redirect(to=reverse('core:detail', kwargs={'pk': pk}))
 
@@ -162,7 +162,7 @@ class RemoveFromCartView(View):
             cart_item = CartItem.objects.get(cart=cart, item__pk=pk)
             cart_item.delete()
             messages.add_message(request, level=messages.SUCCESS,
-                                 message=f"{str(cart_item)} pomyślnie usunięty z koszyka")
+                                 message=f"Usunięto z koszyka: {cart_item}")
         except ObjectDoesNotExist:
 
             raise Http404("Item not in the cart")
@@ -248,6 +248,47 @@ class CheckoutView(View):
             total_price = calc_total_cart_price(cart_item_list)
             return render(request, template_name=self.template_name,
                           context={'cart_item_list': cart_item_list, 'total_price':total_price, 'form': form})
+
+
+class UserView(View):
+
+    def get(self, request):
+        user = request.user
+
+        if hasattr(user, "customer"):
+            customer = user.customer
+            customer_form = CustomerForm(instance=customer)
+            logging.debug(customer)
+        else:
+            customer = None
+            customer_form = CustomerForm()
+
+        orders = Order.objects.filter(user=user).order_by("-date")
+        context = {"user": user, "customer": customer, "customer_form": customer_form, "orders": orders}
+
+        return render(request, template_name="core/user.html", context=context)
+
+    def post(self, request):
+        """
+        POST method allows the customer to change his data.
+        """
+        user = request.user
+
+        if hasattr(user, "customer"):
+            customer = user.customer
+            customer_form = CustomerForm(instance=customer, data=request.POST)
+            logging.debug(customer)
+        else:
+            raise Http404("Klient nie istnieje")
+
+        if customer_form.is_valid():
+            customer_form.save()
+            messages.add_message(request, level=messages.SUCCESS, message="Dane klienta zaktualizowane")
+            return redirect(to=request.path)
+        else:
+            orders = Order.objects.filter(user=user).order_by("-date")
+            context = {"user": user, "customer": customer, "customer_form": customer_form, "orders": orders}
+            return render(request, template_name="core/user.html", context=context)
 
 
 

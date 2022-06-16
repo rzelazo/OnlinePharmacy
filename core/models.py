@@ -105,7 +105,7 @@ class CartItem(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.n_pieces} piece{'s' if self.n_pieces > 1 else ''} of {self.item}"
+        return f"{self.n_pieces}szt. {self.item}"
 
 
 DATE_VALIDATION_ERRORS = {

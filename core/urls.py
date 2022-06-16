@@ -14,6 +14,7 @@ urlpatterns = [
     path('checkout/', views.CheckoutView.as_view(template_name='core/checkout.html'), name='checkout'),
     path('kafelki/', views.KafelkiItemListView.as_view(), name='kafelki'),
     path('category/<int:pk>/', views.CategoryFilteredView.as_view(), name='category-filtered'),
+    path('user/', views.UserView.as_view(), name='user')
 ]
 
 if settings.DEBUG:

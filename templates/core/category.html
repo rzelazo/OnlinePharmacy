@@ -159,7 +159,7 @@ Podkategoria
           <p id="nazwa">{{ item.name }}</p>
         </div>
         <div style="display:block;">
-          <p  id="cena_nied">            
+          <p  id="cena_nied">
           <strong id="niedostepny" style="font-size:18px; font-weight:normal">PRODUKT NIEDOSTĘPNY</strong>
           </p>
         </div>
@@ -181,11 +181,11 @@ Podkategoria
         <p id="nazwa">{{ item.name }}</p>
       </div>
       <div style="display:block;">
-        <p  id="cena">            
+        <p  id="cena">
           {% if item.price_sale %}
           <del style="font-size: 14px; color: #9d9d9d;">{{ item.price }} zł  </del>
             <strong id="cena2"style="padding-left:10px; margin-right: 17%; font-size:18px; font-weight:normal">{{ item.price_sale }} zł</strong>
-    
+
         {% else %}
         <strong id="cena2" style="font-size:18px; font-weight:normal">{{ item.price }} zł</strong>
         {% endif %}</p>
