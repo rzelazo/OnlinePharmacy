@@ -1,41 +1,106 @@
 {% extends "account/base.html" %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 {% load i18n %}
 {% load account socialaccount %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
+{% block extra_head%}
+<style>
+  #form{
+    text-align: center;
+    width: 380px;
+    box-shadow: 0 0 10px 0 rgb(192, 237, 166);
+    padding: 20px;
+    border-radius: 15px;
+    margin: 8% auto 0;
+    margin-top: 2%;
+    background-color: rgba(247, 204, 172, 0.25)
+  }
+  #title{
+    font-weight: bold;
+    font-size: 2.2rem;
+    color:#FFB085;
+    letter-spacing: 2px;
+    padding: 0 0 15px 0;
+    border-bottom: 1px solid slategrey
+  }
+  #in{
+    background-color: #C0EDA6;
+    color: white;
+    height: 40px;
+    border: none;
+  }
+
+
+  #submit {
+    font-size: 18px;
+    text-align: center;
+    color: black !important;
+    border: solid 2px #FFB085;
+    width: 180px;
+    height: 33px;
+    border-radius: 30px;
+    background-color: transparent;
+  }
+  #submit:hover {
+    background-color: #FFB085 !important;
+    color: white !important;
+  }
+
+</style>
+{%endblock%}
 {% block content %}
 
 
 
-
-
-<form class="login" method="POST" action="{% url 'account_login' %}" style="text-align: center;
-width: 450px; box-shadow: 0 0 10px 0 rgb(192, 237, 166); padding: 20px;
-border-radius: 15px; margin: 8% auto 0; margin-top: 2%; background-color: rgba(247, 204, 172, 0.25)">
-  <h1 style="font-weight: bold; font-size: 2.2rem; color:#FFB085; letter-spacing: 2px; padding: 0 0 15px 0;
-  border-bottom: 1px solid slategrey">Zaloguj się</h1>
+<form class="login" method="POST" action="{% url 'account_login' %}" id="form">
+  <h1 id="title" >Zaloguj się</h1>
   <br>
   <br>
   {% csrf_token %}
-  <a style="letter-spacing: 1px;">{{ form.as_p }}</a>
+  <div class="input-group mb-2" style="margin-left: 13%">
+    <div class="input-group-append" >
+      <span class="input-group-text" id="in">
+        <i class="fa-solid fa-user"></i>
+      </span>
+    </div>
+    {{form.login}}
+  </div>
+
+  <br>
+  <div class="input-group mb-2" style="margin-left: 13%">
+    <div class="input-group-append"; style="height: 40px">
+      <span class="input-group-text" id="in">
+        <i class="fas fa-key"></i>
+      </span>
+    </div>
+    {{form.password}}
+  </div>
+
+  <div class="input-group mb-2" >
+    <div class="input-group-append" id="remember" style="margin-left: 19%; width: 215px; letter-spacing: 1px">
+      <a id="click">{{form.remember}}</a>
+        <label>Zapamiętaj mnie</label>
+    </div>
+  </div>
+
+  <br>
+  <!--<a style="letter-spacing: 1px;">{{ form.username.label}}</a>-->
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
   {% endif %}
-  <a class="button secondaryAction" href="{% url 'account_reset_password' %}" style="color: royalblue">{% trans "Forgot Password?" %}</a>
+  <a class="button secondaryAction" href="{% url 'account_reset_password' %}" style="color: royalblue">Zapomniałeś hasła?</a>
   <br>
   <br>
-  <button class="primaryAction" type="submit" style="border-radius: 20px; width: 130px; border-color: #C0EDA6;
-      background: #F7CCAC; height: 30px">Zaloguj się</button>
+  <button class="primaryAction" type="submit" id="submit" >Zaloguj się</button>
   <hr style="margin-top: 10%">
   <label>LUB</label>
   <br>
   <br>
   <a href="{% url 'account_signup'%}">
-    <button class="third Button" type="button"  style="border-radius: 20px; width: 130px;
-        background: #F7CCAC; height: 30px; border-color: #C0EDA6">Zarejestruj się</button>
+    <button class="third Button" type="button"  id="submit">Zarejestruj się</button>
   </a>
 </form>
 <br>

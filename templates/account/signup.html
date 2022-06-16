@@ -4,30 +4,106 @@
 
 {% block head_title %}{% trans "Signup" %}{% endblock %}
 
+{% block extra_head%}
+<style>
+  #signup_form{
+    text-align: center;
+    width: 450px;
+    box-shadow: 0 0 10px 0 rgb(192, 237, 166);
+    padding: 20px;
+    border-radius: 15px;
+    margin: 8% auto 0;
+    margin-top: 2%;
+    background-color: rgba(247, 204, 172, 0.25)
+  }
+  #title{
+    font-weight: bold;
+    font-size: 2.2rem;
+    color:#FFB085;
+    letter-spacing: 2px;
+    padding: 0 0 15px 0;
+    border-bottom: 1px solid slategrey
+  }
+  #cont{
+    height: 40px;
+  }
+  #lab{
+    position: relative;
+    margin-left: 1%;
+    letter-spacing: 1px;
+    height: 40px;
+  }
+  #input{
+    position: absolute;
+    margin-left: 48%;
+  }
+
+  #submit {
+    font-size: 18px;
+    text-align: center;
+    color: black !important;
+    border: solid 2px #FFB085;
+    width: 180px;
+    height: 33px;
+    border-radius: 30px;
+    background-color: transparent;
+  }
+  #submit:hover {
+    background-color: #FFB085 !important;
+    color: white !important;
+  }
+
+</style>
+{%endblock%}
+
 {% block content %}
 
-<form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}"
-      style="text-align: center; width: 450px; box-shadow: 0 0 10px 0 rgb(192, 237, 166); padding: 20px;
-border-radius: 15px; margin: 8% auto 0; margin-top: 2%; background-color: rgba(247, 204, 172, 0.25)">
-  <h1 style="font-weight: bold; font-size: 2.2rem; color:#FFB085; letter-spacing: 2px; padding: 0 0 15px 0;
-  border-bottom: 1px solid slategrey">Zarejestruj się</h1>
+<form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+  <h1 id="title" >Zarejestruj się</h1>
   <br>
   <br>
   {% csrf_token %}
-  <a style="letter-spacing: 1px">{{ form.as_p }}</a>
+  <div class="input-group mb-2" id="cont">
+    <div class="input-group-append" id="lab">
+      <label>Nazwa użytkownika * </label>
+    </div>
+    <div id="input">{{form.username}}</div>
+
+  </div>
+  <div class="input-group mb-2" id="cont">
+    <div class="input-group-append" id="lab">
+      <label>E-mail </label>
+    </div>
+    <div id="input">{{form.email}}</div>
+  </div>
+  <div class="input-group mb-2" id="cont">
+    <div class="input-group-append" id="lab">
+      <label>Hasło *</label>
+    </div>
+    <div id="input"> {{form.password1}} </div>
+  </div>
+  <div class="input-group mb-2" id="cont">
+    <div class="input-group-append" id="lab">
+      <label>Powtórz hasło *</label>
+    </div>
+    <div id="input">{{form.password2}}</div>
+  </div>
+
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
   {% endif %}
+
+  <label style="margin-left: -50%; font-size: 14px">* Oznaczone pola są wymagane</label>
   <br>
-  <button type="submit" style="border-radius: 20px; width: 130px;
-        background: #F7CCAC; height: 30px; border-color: #C0EDA6">Zarejestruj się </button>
+  <br>
+  <br>
+  <button id="submit" type="submit">Zarejestruj się </button>
   <hr style="margin-top: 10%">
-  <label>OR</label>
+  <label>LUB</label>
   <br>
   <br>
   <a href="{% url 'account_login'%}">
-    <button class="third Button" type="button"  style="border-radius: 20px; width: 130px;
-        background: #F7CCAC; height: 30px; border-color: #C0EDA6">Zaloguj się</button>
+    <button id="submit" class="third Button" type="button">Zaloguj się</button>
   </a>
 </form>
 <br>
