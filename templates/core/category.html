@@ -1,26 +1,143 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block head_title %}
+Podkategoria
+{% endblock head_title %}
 
+{% block extra_head %}
+
+<style>
+  #leki {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .box {
+    position: relative;
+    height: 350px;
+    width: 300px;
+  }
+
+
+  .box #foto {
+    align-items: center;
+  }
+
+  #col {
+    width: 300px;
+    position: relative;
+    margin: auto;
+  }
+
+  #col2 {
+    width: 400px;
+    position: relative;
+    margin: auto;
+  }
+
+  #col:hover .zobacz {
+    bottom: 40%;
+    opacity: 0.95;
+    cursor: pointer;
+  }
+
+  #foto {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    height: 100%;
+    max-width: 300px;
+    max-height: 350px;
+    block-size: auto;
+  }
+
+
+  .zobacz {
+    height: 50px;
+    width: 100%;
+    background-color: #C0EDA6;
+    color: white !important;
+    opacity: 0;
+    position: absolute;
+    bottom: 30%;
+    left: 0px;
+    transition: 1s;
+    font-size: 22px;
+    border-radius: 30px;
+    border: 1px white;
+  }
+
+  .zobacz:focus {
+    outline: none;
+  }
+
+  #naz2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 120px;
+  }
+
+  #nazwa {
+    color: #9d9d9d;
+    font-weight: bold;
+    font-size: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+  }
+
+  #cena {
+    color: #000000;
+    /* font-weight: bold; */
+    font-size: 18px;
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 2px solid #C0EDA6;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div id="leki">
   {% if item_list %}
-      <div class="d-flex p-3 align-items-center" style="background-color: white; border-top:solid 1px #cccccc;">
-      {% for item in item_list %}
-        <div class="p2 flex-fill  justify-content-center">
-          <figure>
-            <img src="{{ item.image.url }}" alt="article_image {{ item.name }}" style="width: 50%">
-          </figure>
+  <div class="d-flex p-3" style="background-color: white; flex: auto;">
+    {% for item in item_list %}
+    <!-- <div class="row" style="flex: auto;"> -->
+    <div class="d-flex flex-column justify-content-center" id="col">
+      <div class="box">
+        <div style="align-items: center;">
+          <img id="foto" src="{{ item.image.url }}" alt="article_image {{ item.name }}" />
         </div>
-      {% endfor %}
+      </div>
+      <div id="naz2">
+        <p id="nazwa">{{ item.name }}</p>
+      </div>
+      <div style="display:block;">
+        <p id="cena">{{ item.price }} zł</p>
+      </div>
+      <form action="{% url 'core:detail' item.pk %}">
+        <button type="submit" class="zobacz">
+          ZOBACZ OPIS <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
     </div>
-    <div class="d-flex p-3 bg-light justify-content-around"  style="background-color: white !important">
-      {% for item in item_list %}
-        <div class="p2 flex-fill">
-          <figure>
-            <figcaption><a class="item_link" href="{% url 'core:detail' item.pk %}">{{ item.name }}</a></figcaption>
-          </figure>
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
+    {% if forloop.counter0|divisibleby:2 and not forloop.first%}
+  </div>
+  <div class="d-flex p-3" style="background-color: white; flex: auto;">
+    {% endif %}
+
+    {% endfor %}
+
+  </div>
+</div>
+
+{% endif %}
+
 
 {% endblock %}
