@@ -64,10 +64,11 @@ Index
     margin: auto;
   }
 
-  #col:hover .zobacz {
+  #col:hover .zobacz,
+  #col:hover .zobacz2 {
     bottom: 40%;
     opacity: 0.95;
-    cursor: pointer;
+    /* cursor: pointer; */
   }
 
   #foto {
@@ -81,6 +82,21 @@ Index
     max-width: 300px;
     max-height: 350px;
     block-size: auto;
+  }
+
+  #foto2 {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    height: 100%;
+    max-width: 300px;
+    max-height: 350px;
+    block-size: auto;
+    filter: grayscale();
+    opacity: 0.8;
   }
 
 
@@ -99,7 +115,22 @@ Index
     border: 1px white;
   }
 
-  .zobacz:focus {
+  .zobacz2 {
+    height: 50px;
+    width: 100%;
+    background-color: #9d9d9d;
+    color: white !important;
+    opacity: 0;
+    position: absolute;
+    bottom: 35%;
+    left: 0px;
+    transition: 1s;
+    font-size: 22px;
+    border-radius: 30px;
+    border: 1px white;
+  }
+
+  .zobacz:focus .zobacz2:focus {
     outline: none;
   }
 
@@ -122,11 +153,19 @@ Index
   #cena {
     color: #000000;
     /* font-weight: bold; */
-    font-size: 18px;
     text-align: center;
     padding-top: 5px;
     padding-bottom: 5px;
     border: 2px solid #C0EDA6;
+  }
+
+  #cena_nied {
+    color: #9d9d9d;
+    /* font-weight: bold; */
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 2px solid #9d9d9d;
   }
 </style>
 {% endblock extra_head %}
@@ -165,11 +204,34 @@ Index
 </div>
 
 <p style="color: #8a8a8a; font-size: 30px; padding-bottom: 20px; border-bottom:solid 1px #cccccc;">Polecane produkty</p>
-
 <div id="leki">
   {% if item_list %}
   <div class="d-flex p-3" style="background-color: white; flex: auto;">
     {% for item in item_list %}
+    <!-- <div class="row" style="flex: auto;"> -->
+    {% if item.in_stock == 0 %}
+    <div class="d-flex flex-column justify-content-center" id="col">
+      <div class="box">
+        <div style="align-items: center;">
+          <img id="foto2" src="{{ item.image.url }}" alt="article_image {{ item.name }}" />
+        </div>
+      </div>
+      <div id="naz2">
+        <p id="nazwa">{{ item.name }}</p>
+      </div>
+      <div style="display:block;">
+        <p id="cena_nied">
+          <strong id="niedostepny" style="font-size:18px; font-weight:normal">PRODUKT NIEDOSTĘPNY</strong>
+        </p>
+      </div>
+      <form action="{% url 'core:detail' item.pk %}">
+        <button type="submit" class="zobacz2">
+          ZOBACZ OPIS <i class="fa-solid fa-magnifying-glass" style="padding-left: 5px;"></i>
+        </button>
+      </form>
+    </div>
+
+    {% else %}
     <div class="d-flex flex-column justify-content-center" id="col">
       <div class="box">
         <div style="align-items: center;">
@@ -180,14 +242,24 @@ Index
         <p id="nazwa">{{ item.name }}</p>
       </div>
       <div style="display:block;">
-        <p id="cena">{{ item.price }} zł</p>
+        <p id="cena">
+          {% if item.price_sale %}
+          <del style="font-size: 14px; color: #9d9d9d;">{{ item.price }} zł </del>
+          <strong id="cena2" style="padding-left:10px; margin-right: 17%; font-size:18px; font-weight:normal">
+            {{ item.price_sale }} zł</strong>
+
+          {% else %}
+          <strong id="cena2" style="font-size:18px; font-weight:normal">{{ item.price }} zł</strong>
+          {% endif %}
+        </p>
       </div>
       <form action="{% url 'core:detail' item.pk %}">
         <button type="submit" class="zobacz">
-          ZOBACZ OPIS <i class="fa-solid fa-magnifying-glass"></i>
+          ZOBACZ OPIS <i class="fa-solid fa-magnifying-glass" style="padding-left: 5px;"></i>
         </button>
       </form>
     </div>
+    {% endif %}
     {% if forloop.counter0|divisibleby:3 and not forloop.first%}
   </div>
   <div class="d-flex p-3" style="background-color: white; flex: auto;">
