@@ -111,16 +111,16 @@ Item detail
     opacity: 0.4;
   }
 
+  #add:hover {
+    background-color: #C0EDA6 !important;
+    color: white !important;
+  }
+
   #add:focus,
   #add:active {
     box-shadow: none !important;
     background-color: #C0EDA6 !important;
-  }
-
-  #add2:focus,
-  #add2:active {
-    box-shadow: none !important;
-    background-color: #9d9d9d !important;
+  
   }
 </style>
 {% endblock %}
@@ -131,7 +131,7 @@ Item detail
   <span id="links">
     <a class="uppercase" href="{% url 'core:index' %}">Home > </a>
     <a>Kategoria > </a>
-    <a>Podkategoria > </a>
+    <a>Podkategoria> </a>
     <a href="#">{{ item.name}}</a>
   </span>
 </div>
@@ -207,11 +207,10 @@ Item detail
 <hr>
 <div class="container" style=" color: #4C4C4C; ">
   <strong style="font-size: 18px">Opis</strong>
-  <p>{{ item.description }} Opis powienien byz zdecydowanie dłyzszy, ponieważ nie zapelnia teraz calego containera i
-    brzydko to wygląda. Zatem jest to do zmiany</p>
+  <p>{{ item.description }}</p>
   <br>
   <strong style="font-size: 18px">Skład</strong>
-  <p>Tu powinnismy chyba miec sklad a nie widze go w bazie pzdr</p>
+  <p>{{ item.composition }}</p>
   <br>
   <strong style="font-size: 18px">Masa netto</strong>
   <p>{{ item.net_weight }} g</p>

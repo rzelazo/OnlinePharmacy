@@ -36,15 +36,12 @@ Index
     text-align: center;
   }
 
-  #leki {
-    padding-left: 30px;
-    padding-right: 30px;
-  }
-
   .box {
     position: relative;
-    height: 350px;
-    width: 300px;
+    height: 250px;
+    width: 250px;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 
 
@@ -53,15 +50,17 @@ Index
   }
 
   #col {
-    width: 300px;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 250px;
     position: relative;
-    margin: auto;
+
   }
 
   #col2 {
-    width: 400px;
+    width: 350px;
     position: relative;
-    margin: auto;
+
   }
 
   #col:hover .zobacz,
@@ -79,8 +78,8 @@ Index
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     height: 100%;
-    max-width: 300px;
-    max-height: 350px;
+    max-width: 250px;
+    max-height: 250px;
     block-size: auto;
   }
 
@@ -92,8 +91,8 @@ Index
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     height: 100%;
-    max-width: 300px;
-    max-height: 350px;
+    max-width: 250px;
+    max-height: 300px;
     block-size: auto;
     filter: grayscale();
     opacity: 0.8;
@@ -101,7 +100,7 @@ Index
 
 
   .zobacz {
-    height: 50px;
+    height: 40px;
     width: 100%;
     background-color: #C0EDA6;
     color: white !important;
@@ -110,7 +109,7 @@ Index
     bottom: 30%;
     left: 0px;
     transition: 1s;
-    font-size: 22px;
+    font-size: 20px;
     border-radius: 30px;
     border: 1px white;
   }
@@ -144,7 +143,7 @@ Index
   #nazwa {
     color: #9d9d9d;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 18px;
     padding-top: 10px;
     padding-bottom: 10px;
     text-align: center;
@@ -167,6 +166,8 @@ Index
     padding-bottom: 5px;
     border: 2px solid #9d9d9d;
   }
+
+
 </style>
 {% endblock extra_head %}
 
@@ -206,11 +207,10 @@ Index
 <p style="color: #8a8a8a; font-size: 30px; padding-bottom: 20px; border-bottom:solid 1px #cccccc;">Polecane produkty</p>
 <div id="leki">
   {% if item_list %}
-  <div class="d-flex p-3" style="background-color: white; flex: auto;">
+  <div class="d-flex justify-content-around p-3" style="background-color: white;">
     {% for item in item_list %}
-    <!-- <div class="row" style="flex: auto;"> -->
     {% if item.in_stock == 0 %}
-    <div class="d-flex flex-column justify-content-center" id="col">
+    <div class="d-flex flex-column col-4" id="col">
       <div class="box">
         <div style="align-items: center;">
           <img id="foto2" src="{{ item.image.url }}" alt="article_image {{ item.name }}" />
@@ -232,7 +232,7 @@ Index
     </div>
 
     {% else %}
-    <div class="d-flex flex-column justify-content-center" id="col">
+    <div class="d-flex flex-column col-4" id="col">
       <div class="box">
         <div style="align-items: center;">
           <img id="foto" src="{{ item.image.url }}" alt="article_image {{ item.name }}" />
@@ -245,8 +245,8 @@ Index
         <p id="cena">
           {% if item.price_sale %}
           <del style="font-size: 14px; color: #9d9d9d;">{{ item.price }} zł </del>
-          <strong id="cena2" style="padding-left:10px; margin-right: 17%; font-size:18px; font-weight:normal">
-            {{ item.price_sale }} zł</strong>
+          <strong id="cena2" style="padding-left:10px; margin-right: 15%; font-size:18px; font-weight:normal">
+            {{item.price_sale}} zł</strong>
 
           {% else %}
           <strong id="cena2" style="font-size:18px; font-weight:normal">{{ item.price }} zł</strong>
@@ -262,7 +262,7 @@ Index
     {% endif %}
     {% if forloop.counter0|divisibleby:3 and not forloop.first%}
   </div>
-  <div class="d-flex p-3" style="background-color: white; flex: auto;">
+  <div class="d-flex justify-content-around p-3" style="background-color: white;">
     {% endif %}
 
     {% endfor %}
@@ -271,6 +271,7 @@ Index
 </div>
 
 {% endif %}
+
 
 {% block extra_scripts %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
