@@ -5,7 +5,9 @@
 {% endblock head_title %}
 
 {% block extra_head %}
-  <style>
+
+
+ <style>
     td {
       text-align: center;
     }
@@ -18,7 +20,6 @@
     }
 
     #links {
-      padding: 20px;
       color: #9d9d9d;
     }
 
@@ -55,7 +56,20 @@
       height: 140px; 
       align-items: center;
       border-radius: 80px;
-      font-size: 20px
+      font-size: 18px;
+
+    }
+
+    #p {
+      display:block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;  
+      text-decoration: none;
+      color: black;
+    }
+    #p:hover{
+      color:#FFB085;
     }
 
     #remove {
@@ -82,7 +96,7 @@
     }
 
     #checkout {
-      width: 120px
+      width: 120px;
     }
 
     #checkout:hover {
@@ -116,10 +130,12 @@
     <div class="col-9" style=" height:auto; padding-left: 40px">
       <div class="row text-center d-flex justify-content-around" id="items" >
         <div class="col" >
-        <img src="{{ cart_item.item.image.url }}" alt="item_image" style="max-width: 65%;">
+        <img src="{{ cart_item.item.image.url }}" alt="item_image" style="max-width: 60%;">
       </div>
-      <div class="col">
-        <strong>{{ cart_item.item.name }}</strong>, {{ cart_item.item.get_form_display }}
+      <div class="col-4">
+
+        <a id="p"  data-toggle="tooltip2" data-placement="top" title="{{ cart_item.item.name }}, {{ cart_item.item.get_form_display }}" href="{% url 'core:detail' cart_item.item.pk %}">{{ cart_item.item.name }}, {{ cart_item.item.get_form_display }}</a>
+
       </div>
       <div class="col">
         <strong>{{ cart_item.n_pieces }} szt.</strong>
@@ -128,20 +144,26 @@
         <p >            
           {% if cart_item.item.price_sale %}
           <del style="font-size: 16px;">{{ cart_item.item.price }} zł  </del>
-            <strong style="padding-left:10px; font-size:20px;">{{ cart_item.item.price_sale }} zł</strong>
+            <strong style="padding-left:10px; font-size:18px;">{{ cart_item.item.price_sale }} zł</strong>
         {% else %}
          <strong> {{ cart_item.item.price }} zł </strong>
         {% endif %}</p>
       </div>
 
-      <div class="col">
+      <div class="col ">
         <form method="post" action="{% url 'core:cart-remove' cart_item.item.pk %}">
           {% csrf_token %}
-        <button class="btn btn-outline-dark" id="remove">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+
+        <button class="btn btn-outline-dark" id="remove" data-toggle="tooltip" data-placement="top" title="Usuń">
+
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16" >
             <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z"/>
+
           </svg>
+
         </button>
+        
+
   </form>
       </div>
       </div>
@@ -183,5 +205,17 @@
       <img src="/static/img/sad_koszyk.png" style="width: 20%; justify-self: center;">
     </div>
 
+
   {% endif %}
+
+  {% block extra_scripts %}
+
+
+  <script type="text/javascript">
+
+    $(document).ready(function() {
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+    });
+        </script>
+{% endblock extra_scripts %}
 {% endblock content %}
