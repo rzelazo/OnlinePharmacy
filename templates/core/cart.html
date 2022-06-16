@@ -9,72 +9,179 @@
     td {
       text-align: center;
     }
+
+    #title {
+      margin-left: 5%;
+      padding-top: 30px;
+      color: #4C4C4C;
+      font-weight: normal;
+    }
+
+    #links {
+      padding: 20px;
+      color: #9d9d9d;
+    }
+
+    #links a{
+      color: #9d9d9d;
+      text-decoration: none;
+    }
+
+    #links a:hover{
+      color:#C0EDA6;
+    }
+
+    #con {
+      width:100%;
+      height: 80px;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color:#4C4C4C;
+      padding-top: 60px
+    }
+
+    #con2 {
+      align-items: center;
+      justify-content: center;
+      padding-top: 50px;
+      margin-bottom: 60px;
+    }
+
+    #items {
+      margin-top: 30px; 
+      border: solid 1px #9d9d9d; 
+      height: 140px; 
+      align-items: center;
+      border-radius: 80px;
+      font-size: 20px
+    }
+
+    #remove {
+      border:none !important;
+      color: #4C4C4C;
+    }
+
+    #remove:hover {
+      color:#FFB085;
+      background-color: transparent !important;
+  
+    }
+
+    #remove:focus, #remove:active {
+      box-shadow: none !important;
+      color: #FFB085;
+      background-color: transparent !important;
+      border-color:transparent !important;
+    }
+
+    #summary {
+      font-size: 20px;
+      margin-top: 20px;
+    }
+
+    #checkout {
+      width: 120px
+    }
+
+    #checkout:hover {
+      background-color: #4C4C4C !important;
+      border-color: transparent !important;
+    }
+
+    #checkout:focus, #checkout:active {
+      box-shadow: none !important;
+      background-color: transparent !important;
+      border-color:  #4C4C4C !important;
+      color: #4C4C4C !important;
+    }
+
   </style>
 {% endblock %}
 
 {% block content %}
-  <h1 class="display-3">Your cart:</h1>
+<div class="row" >
+  <span  id="links">
+    <a class="uppercase" href="{% url 'core:index' %}">Home > </a>
+    <a href="#">Koszyk</a>
+</span>
+</div>
+  <h2 id="title">Twój koszyk:</h1>
+  <hr style="width:90%; margin-left:5% !important">
   {% if cart_item_list|length > 0 %}
   {% for cart_item in cart_item_list %}
-  <div class="row">
-    <table class="table align-items-center">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Category/Subcategories</th>
-          <th>Form</th>
-          <th>Net weight</th>
-          <th>Manufacturer</th>
-          <th>Description</th>
-          <th>Number of pieces</th>
-          <th>Price</th>
-          <th style="width: 20%">Image</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ cart_item.item.name }}</td>
-          <td>{{ cart_item.item.subcategories.all|join:",<br>" }}</td>
-          <td>{{ cart_item.item.get_form_display }}</td>
-          <td>{{ cart_item.item.net_weight }} g</td>
-          <td>{{ cart_item.item.manufacturer }}</td>
-          <td>{{ cart_item.item.description }}</td>
-          <td>{{ cart_item.n_pieces }}</td>
-          <td style="width: 10%">
-            {% if cart_item.item.price_sale %}
-              <del>{{ cart_item.item.price }}</del>
-              <br>
-              <p><strong style="font-size: 1.2em;">{{ cart_item.item.price_sale }}
-              </strong><span class="badge bg-primary">sale</span>
-              </p>
-            {% else %}
-              {{ cart_item.item.price }}
-            {% endif %}
-          </td>
-          <td style="width: 20%">
-            <img src="{{ cart_item.item.image.url }}" alt="item_image" style="max-width: 50%;">
-          </td>
-          <td>
-            <form method="post" action="{% url 'core:cart-remove' cart_item.item.pk %}">
-              {% csrf_token %}
-            <input type="submit" value="Remove from cart" class="btn btn-danger">
-      </form>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  {% endfor %}
-    <div class="row justify-content-end">
-      <div class="col-lg-2">
-        <h3>Total price: {{ total_price }}</h3>
+  <div class="container" style="padding-top: 20px">
+    <div class="row">
+    <div class="col-9" style=" height:auto; padding-left: 40px">
+      <div class="row text-center d-flex justify-content-around" id="items" >
+        <div class="col" >
+        <img src="{{ cart_item.item.image.url }}" alt="item_image" style="max-width: 65%;">
       </div>
-      <div class="col-lg-2">
-        <a class="btn btn-primary" href="{% url 'core:checkout' %}">To checkout</a>
+      <div class="col">
+        <strong>{{ cart_item.item.name }}</strong>, {{ cart_item.item.get_form_display }}
+      </div>
+      <div class="col">
+        <strong>{{ cart_item.n_pieces }} szt.</strong>
+      </div>
+      <div class="col">
+        <p >            
+          {% if cart_item.item.price_sale %}
+          <del style="font-size: 16px;">{{ cart_item.item.price }} zł  </del>
+            <strong style="padding-left:10px; font-size:20px;">{{ cart_item.item.price_sale }} zł</strong>
+        {% else %}
+         <strong> {{ cart_item.item.price }} zł </strong>
+        {% endif %}</p>
+      </div>
+
+      <div class="col">
+        <form method="post" action="{% url 'core:cart-remove' cart_item.item.pk %}">
+          {% csrf_token %}
+        <button class="btn btn-outline-dark" id="remove">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z"/>
+          </svg>
+        </button>
+  </form>
+      </div>
+      </div>
+    </div>
+    
+  </div>
+  </div>
+ 
+  {% endfor %}
+    <div class="row justify-content-end" style="margin-top: 30px">
+      <div class="col-lg-3">
+        <h3 style="color:#4C4C4C; ">Podsumowanie</h3>
+        <hr>
+        <div class="d-flex justify-content-between" id="summary">
+        <p>Do zapłaty:</p>
+        <strong>{{ total_price }} zł</strong>
+      </div>
+      <div class="d-flex justify-content-end" style="margin-top: 20px; margin-bottom: 30px">
+      <a  href="{% url 'core:checkout' %}">
+        <button class="btn btn-outline-dark" id="checkout">
+        Dalej
+      </button>
+      </a>
+      </div>
+      </div>
+      <div class="col-lg-1">
+        
       </div>
     </div>
   {% else %}
-  <h1>There are no items in your cart!</h1>
+    <div class="container" id="con">
+      <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16" style="padding-top:0px; margin-right: 15px">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+      </svg>
+      Twój koszyk jest pusty! Dodaj do niego produkty, aby rozpocząć składanie zamówienia.
+    </div>
+    <div class="container d-flex justify-content-center" id="con2">
+      <img src="/static/img/sad_koszyk.png" style="width: 20%; justify-self: center;">
+    </div>
+
   {% endif %}
 {% endblock content %}
