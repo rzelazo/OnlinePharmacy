@@ -1,30 +1,30 @@
 {% extends 'base.html' %}
 
 {% block head_title %}
-  Item detail
+Item detail
 {% endblock head_title %}
 
 {% block extra_head %}
-  <style>
-    td {
-      text-align: center;
-    }
+<style>
+  td {
+    text-align: center;
+  }
 
-    #links {
-      padding: 20px;
-      color: #9d9d9d;
-    }
+  #links {
+    padding: 20px;
+    color: #9d9d9d;
+  }
 
-    #links a{
-      color: #9d9d9d;
-      text-decoration: none;
-    }
+  #links a {
+    color: #9d9d9d;
+    text-decoration: none;
+  }
 
-    #links a:hover{
-      color:#C0EDA6;
-    }
+  #links a:hover {
+    color: #C0EDA6;
+  }
 
-    /* #links a::after {
+  /* #links a::after {
      content: '';
      display: inline-block;
      width: 0px;
@@ -39,7 +39,7 @@
  } */
 
   #name {
-    color:#4C4C4C;
+    color: #4C4C4C;
     /* border-bottom: solid 1px #9d9d9d */
 
   }
@@ -50,161 +50,212 @@
   }
 
   #line {
-    width:40%;
+    width: 40%;
     margin-left: 30% !important;
     margin-right: 30% !important;
     color: #FF8340;
-    height:2px
+    height: 2px
+  }
+
+  #line2 {
+    width: 60%;
+    margin-left: 20% !important;
+    margin-right: 20% !important;
+    color: #FF8340;
+    height: 2px
   }
 
   .wrapper {
-    height:50px;
+    height: 50px;
     min-width: 150px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: transparent;
     border: solid 2px #C0EDA6;
-    border-radius:30px;
+    border-radius: 30px;
   }
 
   /* #FFE0D0    to jest ta brzoskwinka */
-  .wrapper a, .wrapper span {
-    width:100%;
+  .wrapper a,
+  .wrapper span {
+    width: 100%;
     text-align: center;
-    font-size:22px;
+    font-size: 22px;
     color: black;
     text-decoration: none;
   }
 
-  .wrapper span.num{
+  .wrapper span.num {
     pointer-events: none;
     cursor: pointer;
   }
 
-  #add {
+  #wrap_dis {
+    cursor: default;
+    opacity: 0.4;
+  }
+
+  #add,
+  #add2 {
     font-size: 22px;
     color: black !important;
     border: solid 2px #C0EDA6;
     width: 400px;
     height: 50px;
-    border-radius:30px;
+    border-radius: 30px;
   }
 
-  #add:hover {
-    background-color: #C0EDA6 !important;
-    color: white !important;
+  #add2 {
+    cursor: default;
+    opacity: 0.4;
   }
 
-  #add:focus, #add:active {
+  #add:focus,
+  #add:active {
     box-shadow: none !important;
     background-color: #C0EDA6 !important;
   }
-  </style>
+
+  #add2:focus,
+  #add2:active {
+    box-shadow: none !important;
+    background-color: #9d9d9d !important;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 
-<div class="row" >
-    <span  id="links">
-      <a class="uppercase" href="{% url 'core:index' %}">Home > </a>
-      <a>Kategoria > </a>
-      <a>Podkategoria > </a>
-      <a href="#">{{ item.name}}</a>
+<div class="row">
+  <span id="links">
+    <a class="uppercase" href="{% url 'core:index' %}">Home > </a>
+    <a>Kategoria > </a>
+    <a>Podkategoria > </a>
+    <a href="#">{{ item.name}}</a>
   </span>
 </div>
 
 <div class="container" style="padding-top:40px;">
   <div class="row">
-  <div class="col">
-    <img src="{{ item.image.url }}" alt="item_image" style="width: 65%; padding-top:40px">
-  </div>
-
-  <div class="col text-center" >
-    <h2 id="name"> {{ item.name }}</h2>
-   <div style="padding-top: 20px">
-    <hr id="line">
-    <p  id="price">            
-      {% if item.price_sale %}
-      <del style="font-size: 18px;">{{ item.price }} zł  </del>
-        <strong style="padding-left:10px; font-size:26px; font-weight:normal">{{ item.price_sale }} zł</strong>
-
-
+    {% if item.in_stock == 0 %}
+    <div class="col">
+      <img src="{{ item.image.url }}" alt="item_image"
+        style="width: 65%; padding-top:40px; filter: grayscale(); opacity: 0.8;">
+    </div>
     {% else %}
-      {{ item.price }} zł
-    {% endif %}</p>
-    <hr id="line">
-   </div>
+    <div class="col">
+      <img src="{{ item.image.url }}" alt="item_image" style="width: 65%; padding-top:40px">
+    </div>
+    {% endif %}
+    <div class="col text-center">
+      <h2 id="name"> {{ item.name }}</h2>
+      <div style="padding-top: 20px">
+        {% if item.in_stock == 0 %}
 
-    <form class="d-flex justify-content-around" method="post" action="" style="padding-top:50px">
-      <div class="wrapper">
-        <a href="#" class="minus" >-</a>
-        <span class="num" id="amount">1</span>
-        <a  href="#" href="#" class="plus">+</a>
+        <hr id="line2">
+        <p id="price">
+          <strong style="font-size:26px; font-weight:normal">PRODUKT NIEDOSTĘPNY</strong>
+        </p>
+        <hr id="line2">
+
+        {% else %}
+        <hr id="line">
+        <p id="price">
+          {% if item.price_sale %}
+          <del style="font-size: 18px;">{{ item.price }} zł </del>
+          <strong style="padding-left:10px; font-size:26px; font-weight:normal">{{ item.price_sale }} zł</strong>
+
+
+          {% else %}
+          {{ item.price }} zł
+          {% endif %}
+        </p>
+        <hr id="line">
+        {% endif %}
       </div>
-      {% csrf_token %}
-      <div style="display: none">
-        {{ form.as_p }}
-      </div>
-      <input type="submit" value="Dodaj do koszyka" class="btn btn-outline-dark" id="add">
-   </form>
+      <form class="d-flex justify-content-around" method="post" action="" style="padding-top:50px">
+        {% if item.in_stock == 0 %}
+        <div class="wrapper" id="wrap_dis">
+          <a>-</a>
+          <span class="num" id="amount">1</span>
+          <a>+</a>
+        </div>
+        {% else %}
+        <div class="wrapper">
+          <a href="#" class="minus">-</a>
+          <span class="num" id="amount">1</span>
+          <a href="#" href="#" class="plus">+</a>
+        </div>
+        {% endif %}
+        {% csrf_token %}
+        <div style="display: none">
+          {{ form.as_p }}
+        </div>
+        {% if item.in_stock == 0 %}
+        <input type="button" value="Dodaj do koszyka" class="btn btn-outline-dark" id="add2" disabled>
+        {% else %}
+        <input type="submit" value="Dodaj do koszyka" class="btn btn-outline-dark" id="add">
+        {% endif %}
+      </form>
+
+    </div>
 
   </div>
-  
-</div>
 </div>
 <p style="margin-top:100px; margin-left: 60px; color: #4C4C4C; font-size: 30px">O produkcie</p>
 <hr>
 <div class="container" style=" color: #4C4C4C; ">
-    <strong style="font-size: 18px">Opis</strong>
-    <p>{{ item.description }} Opis powienien byz zdecydowanie dłyzszy, ponieważ nie zapelnia teraz calego containera i brzydko to wygląda. Zatem jest to do zmiany</p>
-    <br>
-    <strong style="font-size: 18px">Skład</strong>
-    <p>Tu powinnismy chyba miec sklad a nie widze go w bazie pzdr</p>
-    <br>
-    <strong style="font-size: 18px">Masa netto</strong>
-    <p>{{ item.net_weight }} g</p>
-    <br>
-    <div class=" d-flex justify-content-between">
-      <div class="col">
-    <strong style="font-size: 18px">Forma leku</strong>
-    <p>{{ item.get_form_display }}</p>
+  <strong style="font-size: 18px">Opis</strong>
+  <p>{{ item.description }} Opis powienien byz zdecydowanie dłyzszy, ponieważ nie zapelnia teraz calego containera i
+    brzydko to wygląda. Zatem jest to do zmiany</p>
+  <br>
+  <strong style="font-size: 18px">Skład</strong>
+  <p>Tu powinnismy chyba miec sklad a nie widze go w bazie pzdr</p>
+  <br>
+  <strong style="font-size: 18px">Masa netto</strong>
+  <p>{{ item.net_weight }} g</p>
+  <br>
+  <div class=" d-flex justify-content-between">
+    <div class="col">
+      <strong style="font-size: 18px">Forma leku</strong>
+      <p>{{ item.get_form_display }}</p>
+    </div>
+    <div class="col" style="text-align:right; ">
+      <strong style="font-size: 18px">Producent</strong>
+      <p>{{ item.manufacturer }}</p>
+    </div>
   </div>
-  <div class="col" style="text-align:right; ">
-    <strong  style="font-size: 18px">Producent</strong>
-    <p>{{ item.manufacturer }}</p>
-  </div>
-  </div>
-    <br>
+  <br>
 </div>
 <hr>
- 
 
-  <script>
-    const plus = document.querySelector(".plus"),
+
+<script>
+  const plus = document.querySelector(".plus"),
     minus = document.querySelector(".minus"),
     num = document.querySelector(".num");
 
-    let a = 1;
+  let a = 1;
 
-    plus.addEventListener("click", ()=>{
-      if(a<=99) {
-        a++;
-        num.innerText = a;
-        document.getElementById("id_n_pieces").value = a;
-      }
-    });
+  plus.addEventListener("click", () => {
+    if (a <= 99) {
+      a++;
+      num.innerText = a;
+      document.getElementById("id_n_pieces").value = a;
+    }
+  });
 
-    minus.addEventListener("click", ()=>{
-      if(a>1) {
-        a--;
-        num.innerText = a;
-        document.getElementById("id_n_pieces").value = a;
-      }
-    });
-  </script>
+  minus.addEventListener("click", () => {
+    if (a > 1) {
+      a--;
+      num.innerText = a;
+      document.getElementById("id_n_pieces").value = a;
+    }
+  });
+</script>
 
-  {% block extra_scripts %}
-  
-  {% endblock extra_scripts %}
+{% block extra_scripts %}
+
+{% endblock extra_scripts %}
 {% endblock content %}
