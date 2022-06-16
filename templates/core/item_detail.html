@@ -11,7 +11,7 @@ Item detail
   }
 
   #links {
-    padding: 20px;
+
     color: #9d9d9d;
   }
 
@@ -47,6 +47,7 @@ Item detail
   #price {
     font-size: 26px;
     content: "";
+    height:auto;
   }
 
   #line {
@@ -146,11 +147,11 @@ Item detail
         style="width: 65%; padding-top:40px; filter: grayscale(); opacity: 0.8;">
     </div>
     {% else %}
-    <div class="col">
+    <div class="col" >
       <img src="{{ item.image.url }}" alt="item_image" style="width: 65%; padding-top:40px">
     </div>
     {% endif %}
-    <div class="col text-center">
+    <div class="col text-center" style="padding-top:30px">
       <h2 id="name"> {{ item.name }}</h2>
       <div style="padding-top: 20px">
         {% if item.in_stock == 0 %}
@@ -171,6 +172,7 @@ Item detail
 
           {% else %}
           {{ item.price }} zł
+          
           {% endif %}
         </p>
         <hr id="line">
