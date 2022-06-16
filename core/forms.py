@@ -3,7 +3,7 @@ from .models import *
 
 
 class AddItemToCartForm(forms.Form):
-    n_pieces = forms.IntegerField(min_value=1, max_value=99)
+    n_pieces = forms.IntegerField(min_value=1, max_value=99, initial=1)
 
 
 class CheckoutForm(forms.ModelForm):
@@ -24,6 +24,7 @@ class CustomerForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.Meta.instance = self
         for fieldname in self.Meta.fields:
             self.fields[fieldname].help_text = None
 
@@ -39,4 +40,8 @@ class CustomerForm(forms.ModelForm):
             "date_of_birth": "Data urodzenia",
             "phone_number": "Numer telefonu",
             "gender": "Płeć"
+        }
+
+        widgets = {
+            "date_of_birth": forms.DateInput(attrs={"type": "date"})
         }

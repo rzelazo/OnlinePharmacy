@@ -147,8 +147,8 @@ class Customer(models.Model):
     MALE = 'm'
     FEMALE = 'f'
     GENDER_CHOICES = (
-        (MALE, 'Male'),
-        (FEMALE, 'Female'),
+        (MALE, 'Mężczyzna'),
+        (FEMALE, 'Kobieta'),
     )
 
     first_name = models.CharField(max_length=30, help_text="Customer's first name")
@@ -160,6 +160,8 @@ class Customer(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, help_text="Customer's gender")
     user = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                              help_text="User account associated with this customer")
+
+    address = models.ForeignKey(to="Address", on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         if self.second_name is not None:
@@ -176,19 +178,21 @@ class Order(models.Model):
     CANCELLED = 'cancelled'  # The order has been cancelled by either the customer or the seller
 
     STATUS_CHOICES = (
-        (AWAITING_PAYMENT, 'Awaiting payment'),
-        (PROCESSING, 'Processing'),
-        (SHIPPED, 'Shipped'),
-        (COMPLETED, 'Completed'),
-        (CANCELLED, 'Cancelled')
+        (AWAITING_PAYMENT, 'Oczekiwanie na zapłatę'),
+        (PROCESSING, 'W realizacji'),
+        (SHIPPED, 'Wysłano'),
+        (COMPLETED, 'Zrealizowano'),
+        (CANCELLED, 'Anulowano')
     )
 
-    date = models.DateField(auto_now_add=True)
+    date = models.DateTimeField(auto_now_add=True)
 
-    status = models.CharField(STATUS_CHOICES, max_length=max(len(s[0]) for s in STATUS_CHOICES),
+    status = models.CharField(choices=STATUS_CHOICES, max_length=max(len(s[0]) for s in STATUS_CHOICES),
                               help_text="The current status of the order", default=AWAITING_PAYMENT, blank=True)
 
     items = models.ManyToManyField(to='Item', through='OrderItem', help_text="Items that the order comprises")
+
+    total_price = models.DecimalField(max_digits=7, decimal_places=2, default=0.00, help_text="Total price of the order")
 
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                              help_text="User that have made this order", null=True)

@@ -54,10 +54,11 @@ def get_or_create_cart(request):
     return cart, created
 
 
-def calc_total_cart_price(cart_item_list):
-    total_price = sum(cart_item.item.price_sale * cart_item.n_pieces if cart_item.item.price_sale is not None
-                      else cart_item.item.price * cart_item.n_pieces
-                      for cart_item in cart_item_list)
+def calc_total_price(container_item_list):
+    
+    total_price = sum(container_item.item.price_sale * container_item.n_pieces if container_item.item.price_sale is not None
+                      else container_item.item.price * container_item.n_pieces
+                      for container_item in container_item_list)
     return total_price
 
 
@@ -144,7 +145,7 @@ class CartView(View):
 
         cart_item_list = CartItem.objects.filter(cart=cart).order_by('item__name')
 
-        total_price = calc_total_cart_price(cart_item_list)
+        total_price = calc_total_price(cart_item_list)
 
         context = {'cart_item_list': cart_item_list, 'total_price': total_price}
         return render(request, template_name=self.template_name, context=context)
@@ -194,9 +195,17 @@ class CheckoutView(View):
         cart = get_or_create_cart(request)[0]
         cart_item_list = CartItem.objects.filter(cart=cart).order_by('item__name')
 
-        total_price = calc_total_cart_price(cart_item_list)
+        total_price = calc_total_price(cart_item_list)
 
-        form = CheckoutForm()
+        user = request.user
+        # check if user is logged in and if user is a customer and if it has address bound to his account
+        if user.is_authenticated and hasattr(user, "customer") and hasattr(user.customer, "address"):
+            customer_address = user.customer.address
+            # pre-fill the checkout form with address bound to the customer (e.g. address used by the last checkout)
+            form = CheckoutForm(instance=customer_address)
+        else:
+            form = CheckoutForm()
+
         context = {"cart_item_list": cart_item_list, "total_price": total_price, "form": form}
         return render(request, template_name=self.template_name, context=context)
 
@@ -210,13 +219,21 @@ class CheckoutView(View):
         form = CheckoutForm(data=request.POST)
 
         if form.is_valid():
+
             address, address_created = Address.objects.get_or_create(**form.cleaned_data)
             user = request.user
 
             if user.is_authenticated:
-                order = Order(user=user, address=address)
+                order = Order.objects.create(user=user, address=address)
+
+                # if user is customer - bind the created or retrieved address to his account
+                # the address checkout form will be then automatically pre-filled by the next order
+                if hasattr(user, "customer"):
+                    user.customer.address = address
+                    user.customer.save()
+
             else:
-                order = Order(address=address)
+                order = Order.objects.create(address=address)
 
             ordered_items = [OrderItem(order=order, item=cart_item.item, n_pieces=cart_item.n_pieces)
                              for cart_item in cart_item_list]
@@ -233,8 +250,13 @@ class CheckoutView(View):
 
             # bind ordered items to order and adjust the item stock
             for ordered_item in ordered_items:
-                ordered_item.save() # TODO django.core.exceptions.ValidationError: {'order': ['To pole nie może być puste.']}
-                Item.objects.get(pk=ordered_item.item.pk).in_stock -= ordered_item.n_pieces
+                ordered_item.save()
+                item = Item.objects.get(pk=ordered_item.item.pk)
+                item.in_stock -= ordered_item.n_pieces
+                item.save()
+
+            order.total_price = calc_total_price(ordered_items)
+            order.save()
 
             # remove items from cart
             for cart_item in cart_item_list:
@@ -245,7 +267,7 @@ class CheckoutView(View):
 
         # if form is invalid, show errors to the user
         else:
-            total_price = calc_total_cart_price(cart_item_list)
+            total_price = calc_total_price(cart_item_list)
             return render(request, template_name=self.template_name,
                           context={'cart_item_list': cart_item_list, 'total_price':total_price, 'form': form})
 
@@ -253,11 +275,17 @@ class CheckoutView(View):
 class UserView(View):
 
     def get(self, request):
+        """
+        GET method allows for displaying and editing the customer's personal data,
+        as well as for viewing the user's history of transactions.
+        """
         user = request.user
 
         if hasattr(user, "customer"):
             customer = user.customer
-            customer_form = CustomerForm(instance=customer)
+            initial_date_of_birth = customer.date_of_birth.isoformat()
+            initial_data = {"date_of_birth": initial_date_of_birth}
+            customer_form = CustomerForm(instance=customer, initial=initial_data)
             logging.debug(customer)
         else:
             customer = None
