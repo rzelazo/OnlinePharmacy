@@ -134,16 +134,16 @@
         <!-- Show link to admin panel only if user is an administrator-->
         {% if user.is_staff %}
         <li class="nav-item">
-          <a class="nav-link text-secondary" href="{% url 'admin:index' %}">Admin panel</a>
+          <a class="nav-link text-secondary" href="{% url 'admin:index' %}">Panel administratora</a>
         </li>
         {% endif %}
 
         <li class="nav-item">
-          <a class="nav-link text-danger" href="{% url 'account_logout' %}">Sign out</a>
+          <a class="nav-link text-danger" href="{% url 'account_logout' %}">Wyloguj</a>
         </li>
     {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'account_login' %}">Sign in</a>
+          <a class="nav-link" href="{% url 'account_login' %}">Zaloguj</a>
         </li>
     {% endif %}
       </ul>

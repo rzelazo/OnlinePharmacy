@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView, DetailView
-from .models import Item, CartItem, Cart, Customer
+from .models import *
 from django.contrib import messages
 from django.urls import reverse
-from .forms import AddItemToCartForm
+from .forms import AddItemToCartForm, CheckoutForm
 from django.core.validators import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -52,6 +52,13 @@ def get_or_create_cart(request):
                 logging.debug("Cart created - session_id: " + session_key)
 
     return cart, created
+
+
+def calc_total_cart_price(cart_item_list):
+    total_price = sum(cart_item.item.price_sale * cart_item.n_pieces if cart_item.item.price_sale is not None
+                      else cart_item.item.price * cart_item.n_pieces
+                      for cart_item in cart_item_list)
+    return total_price
 
 
 class ItemListView(ListView):
@@ -120,7 +127,7 @@ class ItemDetailView(View):
                               context={'item': item, 'form': form})
 
             messages.add_message(request, level=messages.SUCCESS,
-                                 message=f"{item.name} successfully added to the cart")
+                                 message=f"{item.name} pomyślnie umieszczony w koszyku")
 
             return redirect(to=reverse('core:detail', kwargs={'pk': pk}))
 
@@ -133,13 +140,11 @@ class CartView(View):
     template_name = 'core/cart.html'
 
     def get(self, request):
-        cart, created = get_or_create_cart(request)
+        cart = get_or_create_cart(request)[0]
 
         cart_item_list = CartItem.objects.filter(cart=cart).order_by('item__name')
 
-        total_price = sum(cart_item.item.price_sale * cart_item.n_pieces if cart_item.item.price_sale is not None
-                          else cart_item.item.price * cart_item.n_pieces
-                          for cart_item in cart_item_list)
+        total_price = calc_total_cart_price(cart_item_list)
 
         context = {'cart_item_list': cart_item_list, 'total_price': total_price}
         return render(request, template_name=self.template_name, context=context)
@@ -157,7 +162,7 @@ class RemoveFromCartView(View):
             cart_item = CartItem.objects.get(cart=cart, item__pk=pk)
             cart_item.delete()
             messages.add_message(request, level=messages.SUCCESS,
-                                 message=f"{str(cart_item)} successfully removed from the cart")
+                                 message=f"{str(cart_item)} pomyślnie usunięty z koszyka")
         except ObjectDoesNotExist:
 
             raise Http404("Item not in the cart")
@@ -170,8 +175,83 @@ class CategoryFilteredView(ItemListView):
     template_name = "core/category.html"
     context_object_name = "item_list"
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["category_name"] = SubCategory.objects.get(pk=self.kwargs['pk']).name
+        return context
+
     def get_queryset(self):
         """
         Filter items on subcategory id.
         """
         return self.model.objects.filter(subcategories=self.kwargs['pk'])
+
+
+class CheckoutView(View):
+    template_name = "core/checkout.html"
+
+    def get(self, request):
+        cart = get_or_create_cart(request)[0]
+        cart_item_list = CartItem.objects.filter(cart=cart).order_by('item__name')
+
+        total_price = calc_total_cart_price(cart_item_list)
+
+        form = CheckoutForm()
+        context = {"cart_item_list": cart_item_list, "total_price": total_price, "form": form}
+        return render(request, template_name=self.template_name, context=context)
+
+    def post(self, request):
+        cart, cart_created = get_or_create_cart(request)
+        cart_item_list = CartItem.objects.filter(cart=cart).order_by('item__name')
+
+        if cart_created or len(cart_item_list) < 1:
+            raise Http404("Koszyk jest pusty!")
+
+        form = CheckoutForm(data=request.POST)
+
+        if form.is_valid():
+            address, address_created = Address.objects.get_or_create(**form.cleaned_data)
+            user = request.user
+
+            if user.is_authenticated:
+                order = Order(user=user, address=address)
+            else:
+                order = Order(address=address)
+
+            ordered_items = [OrderItem(order=order, item=cart_item.item, n_pieces=cart_item.n_pieces)
+                             for cart_item in cart_item_list]
+            try:
+                # Check if all items that are about to be checked out have enough pieces in stock, if not show error
+                for ordered_item in ordered_items:
+                    ordered_item.validate_enough_pieces()
+
+            except ValidationError as ex:
+                # If the pharmacy is short on at least one of items that are about to be checked out
+                # (order_item.n_pieces > item.in_stock) -> show error message
+                messages.add_message(request, level=messages.WARNING, message=ex.messages[0])
+                return render(request, template_name=self.template_name, context={"form": form})
+
+            # bind ordered items to order and adjust the item stock
+            for ordered_item in ordered_items:
+                ordered_item.save() # TODO django.core.exceptions.ValidationError: {'order': ['To pole nie może być puste.']}
+                Item.objects.get(pk=ordered_item.item.pk).in_stock -= ordered_item.n_pieces
+
+            # remove items from cart
+            for cart_item in cart_item_list:
+                cart_item.delete()
+
+            messages.add_message(request, level=messages.SUCCESS, message="Zamówienie wykonane pomyślnie!")
+            return redirect(to=reverse('core:index'))
+
+        # if form is invalid, show errors to the user
+        else:
+            total_price = calc_total_cart_price(cart_item_list)
+            return render(request, template_name=self.template_name,
+                          context={'cart_item_list': cart_item_list, 'total_price':total_price, 'form': form})
+
+
+
+
+
+
+

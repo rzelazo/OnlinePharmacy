@@ -55,7 +55,9 @@ class Item(models.Model):
     form = models.CharField(max_length=3, choices=FORM_CHOICES,
                             help_text="The form of the product, eg. tablets, syrup etc.")
 
-    description = models.TextField(default="brak opisu")
+    composition = models.TextField(default="brak składu", help_text="The composition of the product")
+
+    description = models.TextField(default="brak opisu", help_text="The description of the product")
 
     net_weight = models.PositiveIntegerField(help_text="Net weight of the product (in grams)")
     price = models.DecimalField(max_digits=6, decimal_places=2, help_text="The regular price of the product")
@@ -91,16 +93,19 @@ class CartItem(models.Model):
     item = models.ForeignKey(to='Item', on_delete=models.CASCADE)
     n_pieces = models.PositiveIntegerField(help_text="Number of ordered item pieces")
 
-    def __str__(self):
-        return f"{self.n_pieces} piece{'s' if self.n_pieces > 1 else ''} of {self.item}"
+    def validate_enough_pieces(self):
+        if self.n_pieces > self.item.in_stock:
+            raise ValidationError({'n_pieces': f"Niewystarczająca liczba sztuk {self.item.name} na stanie!"})
 
     def clean(self, *args, **kwargs):
-        if self.n_pieces > self.item.in_stock:
-            raise ValidationError({'n_pieces': "Not enough pieces in stock!"})
+        self.validate_enough_pieces()
 
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.n_pieces} piece{'s' if self.n_pieces > 1 else ''} of {self.item}"
 
 
 DATE_VALIDATION_ERRORS = {
@@ -179,11 +184,16 @@ class Order(models.Model):
     )
 
     date = models.DateField(auto_now_add=True)
+
     status = models.CharField(STATUS_CHOICES, max_length=max(len(s[0]) for s in STATUS_CHOICES),
-                              help_text="The current status of the order")
+                              help_text="The current status of the order", default=AWAITING_PAYMENT, blank=True)
+
     items = models.ManyToManyField(to='Item', through='OrderItem', help_text="Items that the order comprises")
-    customer = models.ForeignKey(to='Customer', on_delete=models.CASCADE,
-                                 help_text="Customer that have made this order")
+
+    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                             help_text="User that have made this order", null=True)
+
+    address = models.ForeignKey(to="Address", on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Order #{self.id}"
@@ -197,6 +207,17 @@ class OrderItem(models.Model):
     order = models.ForeignKey(to='Order', on_delete=models.CASCADE)
     n_pieces = models.PositiveIntegerField(help_text="Number of ordered item pieces")
 
+    def validate_enough_pieces(self):
+        if self.n_pieces > self.item.in_stock:
+            raise ValidationError({'n_pieces': f"Niewystarczająca liczba sztuk {self.item.name} na stanie!"})
+
+    def clean(self, *args, **kwargs):
+        self.validate_enough_pieces()
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.n_pieces} pieces of {self.item}"
 
@@ -206,12 +227,12 @@ POSTAL_CODE_PATTERN = re.compile(r'\d{2}-\d{3}')
 
 def validate_postal_code(postal_code):
     if POSTAL_CODE_PATTERN.match(postal_code) is None:
-        raise ValidationError('Postal code must be in format XX-XXX where Xs are digits.')
+        raise ValidationError('Kod pocztowy musi mieć format XX-XXX gdzie X to cyfra')
 
 
 def validate_city_name(city):
     if not city.isalpha():
-        raise ValidationError("City name can only contain letters!")
+        raise ValidationError("Nazwa miasta może zawierać wyłącznie litery")
 
 
 class Address(models.Model):
