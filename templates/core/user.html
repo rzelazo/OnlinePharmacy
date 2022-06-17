@@ -128,7 +128,6 @@
       <p id="info">Adres email: brak</p>
       {% endif %}
 
-      {% if customer %}
       <form action="" method="post">
         {% csrf_token %}
         <table>
@@ -138,9 +137,7 @@
         </table>
         <input type="submit" value="Zatwierdź" class="btn btn-outline-dark" id="confirm">
       </form>
-      {% else %}
-      <h2 id="info">Brak danych</h2>
-      {% endif %}
+
     </div>
   </div>
 
@@ -170,7 +167,9 @@
     {% for order_item in order.orderitem_set.all %}
     <tr>
       <td>
+        <a href="{% url 'core:detail' order_item.item.pk %}">
         {{ order_item.item.name }}
+        </a>
       </td>
       <td>
         {% if order_item.item.price_sale %}
