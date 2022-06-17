@@ -1,74 +1,234 @@
-{% extends "base.html" %}
+{% extends "account/base.html" %}
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<script src="https://kit.fontawesome.com/ad95a8dfe1.js" crossorigin="anonymous"></script>
+
+{% block extra_head%}
+<style>
+  .wrapper{
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .sidenav{
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    user-select: none;
+    left: 0;
+    width: 290px;
+    height: 100%;
+    background: #F7CCAC;
+    box-sizing: border-box;
+    text-decoration: none;
+    z-index: 1;
+  }
+  .sidenav li{
+    list-style: none;
+  }
+  .sidenav header{
+    font-size: 22px;
+    color: #C0EDA6;
+    font-weight: bold;
+    text-align: center;
+    line-height: 70px;
+    background: #FFB085;
+
+  }
+
+  .sidenav ul a{
+    text-decoration: none;
+    display: block;
+    height: 80%;
+    width: 100%;
+    line-height: 65px;
+    font-size: 20px;
+    color: white;
+    padding-left: 10px;
+    transition: 0.4s;
+  }
+
+  ul li:hover a{
+    padding-left: 40px;
+  }
+
+  .box{
+    margin-top: 5%;
+    border: solid 2px #C0EDA6;
+    border-radius: 20px;
+    height: 350px;
+  }
+
+
+  #info{
+    margin-top: 2%;
+    margin-left: 5%;
+    font-size: 20px;
+  }
+  .data-table{
+    margin-bottom: 5%;
+    margin-top: 3%;
+    width: 1040px;
+
+  }
+  .data-table thead tr{
+    background-color: #FFB085;
+    color: #ffffff;
+    text-align: center;
+    font-weight: bold;
+    height: 55px;
+  }
+
+  .data-table th,
+  .data-table td{
+    padding: 10px 10px;
+    text-align: center;
+  }
+  .data-table tbody tr{
+    border-bottom: 1px solid #dddddd;
+  }
+  .data-table tbody tr:nth-of-type(even){
+    background-color: #f3f3f3;
+  }
+  .data-table tbody tr:nth-of-type(odd) {
+    background-color: #FAEBD7;
+  }
+
+
+</style>
+{% endblock %}
 
 {% block content %}
+<body>
+<div class="wrapper" style="height: fit-content">
+  <div class="sidenav" id="pls">
+    <header>Mój profil</header>
 
+    <ul>
+      <li class="list" id="md"><a class="active"><i class="fa-regular fa-user"></i>
+        <label style="margin-left: 5%">Moje dane</label>
+      </a></li>
+      <li class="list" id="his"><a class="active"><i class="fa-solid fa-list"></i>
+        <label style="margin-left: 5%">Historia zamówień</label>
+      </a></li>
+    </ul>
+  </div>
+</div>
 
-  <p>Nazwa użytkownika: {{ user.username }}</p>
-  {% if user.email %}
-  <p>Adres email: {{ user.email }}</p>
-  {% else %}
-  <p>Adres email: brak</p>
-  {% endif %}
+<div class="content" style="position: relative;">
 
-  <h3 class="display-3">Dane klienta:</h3>
-  {% if customer %}
-    <form action="" method="post">
-    {% csrf_token %}
-    <table>
+  <div id="mydata" class="data" style="margin-left: 20%;  margin-bottom:5%; height: fit-content" >
+    <h1 style="margin-top: 3%; letter-spacing: 1px; font-size: 50px; color: #C0EDA6;
+            padding: 0 0 15px 0; border-bottom: 1px solid #FFB085;">Moje dane</h1>
 
-    {{ customer_form.as_table }}
+    <div class="box">
+      <p id="info">Nazwa użytkownika: {{ user.username }}</p>
+      {% if user.email %}
+      <p id="info">Adres email: {{ user.email }}</p>
+      {% else %}
+      <p id="info">Adres email: brak</p>
+      {% endif %}
 
-    </table>
-    <input type="submit" value="Zatwierdź" class="btn btn-outline-dark" id="confirm">
-    </form>
-  {% else %}
-  <h4>Brak danych</h4>
-  {% endif %}
+      {% if customer %}
+      <form action="" method="post">
+        {% csrf_token %}
+        <table>
 
-  <hr>
-  <h3 class="display-3">Historia zamówień:</h3>
-    <table class="table">
-      {% for order in orders %}
-        <thead class="thead-light" style="font-size: large">
-        <tr>
-          <th>Nr. zamównienia</th>
-          <th>Data</th>
-          <th>Status</th>
-        </tr>
-        </thead>
-        <tr>
-          <td># {{ order.id }}</td>
-          <td>{{ order.date }}</td>
-          <td>{{ order.get_status_display }}</td>
-        </tr>
-        <tr>
-         <th>Produkt</th>
-         <th>Cena</th>
-         <th>Liczba sztuk</th>
-        </tr>
-        {% for order_item in order.orderitem_set.all %}
-        <tr>
-          <td>
-            {{ order_item.item.name }}
-          </td>
-          <td>
-            {% if order_item.item.price_sale %}
-              {{ order_item.item.price_sale }}
-            {% else %}
-              {{ order_item.item.price }}
-            {% endif %}
-          </td>
-          <td>
-            {{ order_item.n_pieces }}
-          </td>
-        </tr>
-        {% endfor %}
-        <tr style="font-size: large">
-          <th>Koszt całkowity:</th>
-          <td colspan="2" style="text-align: center"><strong>{{ order.total_price }} zł</strong></td>
-        </tr>
-      {% endfor %}
-    </table>
+          {{ customer_form.as_table }}
+
+        </table>
+        <input type="submit" value="Zatwierdź" class="btn btn-outline-dark" id="confirm">
+      </form>
+      {% else %}
+      <h2 id="info">Brak danych</h2>
+      {% endif %}
+    </div>
+  </div>
+
+<div id="history" class="data" style="margin-left: 20%">
+  <h1 style="margin-top: 3%; letter-spacing: 1px; font-size: 50px; color: #C0EDA6;
+            padding: 0 0 15px 0; border-bottom: 1px solid #FFB085">Historia zamówień:</h1>
+  {% for order in orders %}
+  <table class="data-table">
+
+    <thead>
+      <tr>
+        <th>Nr. zamównienia</th>
+        <th>Data</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tr>
+      <td># {{ order.id }}</td>
+      <td>{{ order.date }}</td>
+      <td>{{ order.get_status_display }}</td>
+    </tr>
+    <tr>
+      <th>Produkt</th>
+      <th>Cena</th>
+      <th>Liczba sztuk</th>
+    </tr>
+    {% for order_item in order.orderitem_set.all %}
+    <tr>
+      <td>
+        {{ order_item.item.name }}
+      </td>
+      <td>
+        {% if order_item.item.price_sale %}
+        {{ order_item.item.price_sale }}
+        {% else %}
+          {{ order_item.item.price }}
+        {% endif %}
+      </td>
+      <td>
+        {{ order_item.n_pieces }}
+      </td>
+    </tr>
+    {% endfor %}
+    <tr style="font-size: large">
+      <th>Koszt całkowity:</th>
+      <td colspan="2" style="text-align: center"><strong>{{ order.total_price }} zł</strong></td>
+    </tr>
+    {% endfor %}
+
+  </table>
   </h3>
+</div>
+</div>
+
+
+<script>
+  let list = document.querySelectorAll('.list');
+  for(let i=0; i<list.length; i++){
+    list[i].onclick=function (){
+      let j = 0;
+      while(j<list.length){
+        list[j++].className = 'list';
+      }
+      list[i].className='list active';
+      if (list[i] === document.querySelector('#md')) {
+        document.querySelector('#md').style.fontWeight='bold';
+        document.querySelector('#his').style.fontWeight='normal';
+        document.querySelector('#history').style.display = "none";
+        document.querySelector('#mydata').style.display = "block";
+      } else if (list[i] === document.querySelector('#his')) {
+        document.querySelector('#his').style.fontWeight='bold';
+        document.querySelector('#md').style.fontWeight='normal';
+        document.querySelector("#mydata").style.display = "none";
+        document.querySelector('#history').style.display = "block";
+      }
+    }
+
+  }
+
+
+
+</script>
+
+</body>
 
 {% endblock %}
+
+
+
+</html>
+
