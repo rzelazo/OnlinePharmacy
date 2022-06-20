@@ -13,14 +13,15 @@
     margin: 0;
     padding: 0;
     position: absolute;
+    left: -290px;
     user-select: none;
-    left: 0;
     width: 290px;
     height: 100%;
     background: #F7CCAC;
     box-sizing: border-box;
     text-decoration: none;
     z-index: 1;
+    transition: all 0.5s ease;
   }
   .sidenav li{
     list-style: none;
@@ -55,7 +56,7 @@
     margin-top: 5%;
     border: solid 2px #C0EDA6;
     border-radius: 20px;
-    height: 350px;
+    height: 500px;
   }
 
 
@@ -64,18 +65,19 @@
     margin-left: 5%;
     font-size: 20px;
   }
-  .data-table{
+   .data-table{
     margin-bottom: 5%;
     margin-top: 3%;
     width: 1040px;
 
   }
   .data-table thead tr{
-    background-color: #FFB085;
-    color: #ffffff;
+    background-color: #ffd1b8;
+    color: white;
     text-align: center;
     font-weight: bold;
-    height: 55px;
+    height: 60px;
+    font-size: 19px;
   }
 
   .data-table th,
@@ -85,13 +87,118 @@
   }
   .data-table tbody tr{
     border-bottom: 1px solid #dddddd;
+    border-left: 2px solid #FAEBD7;
+    border-right: 2px solid #FAEBD7;
+  }
+  .data-table tbody tr:last-of-type{
+    border-bottom: 2px solid #FAEBD7;
   }
   .data-table tbody tr:nth-of-type(even){
-    background-color: #f3f3f3;
+    background-color: white;
   }
   .data-table tbody tr:nth-of-type(odd) {
     background-color: #FAEBD7;
   }
+  #check{
+    display: none;
+  }
+  label #open, label #close{
+    position: absolute;
+    cursor: pointer;
+    border-radius: 3px;
+
+  }
+  label #open{
+    left: 20px;
+    top: 145px;
+    font-size: 35px;
+    color: #C0EDA6;
+    padding: 6px 12px;
+    transition: all 0.5s;
+  }
+  label #close{
+    z-index: 1111;
+    left: -290px;
+    top: 155px;
+    font-size: 30px;
+    padding: 4px 9px;
+    transition: all 0.5s ease;
+    color: #C0EDA6;
+
+  }
+  #check:checked ~ .sidenav{
+    left: 0;
+  }
+  #check:checked ~ label #open{
+    left: 250px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  #check:checked ~ label #close{
+    left: 240px;
+
+  }
+
+  #confirm {
+    margin-left: 18%;
+    margin-top: 4%;
+    font-size: 18px;
+    justify-content: center;
+    align-items: center;
+    color: black !important;
+    border: solid 2px #FFB085;
+    width: 180px;
+    height: 33px;
+    border-radius: 30px;
+    background-color: transparent;
+  }
+  #confirm:hover {
+    background-color: #FFB085 !important;
+    color: white !important;
+  }
+  #table{
+    margin-left: 5%;
+  }
+
+  #table td{
+    width: 300px;
+    height:50px;
+  }
+  #edit{
+    margin-top: 1%;
+    margin-left: 82%;
+    font-size: 18px;
+    text-align: center;
+    color: black !important;
+    border: solid 2px #FFB085;
+    width: 180px;
+    height: 33px;
+    border-radius: 30px;
+    background-color: transparent;
+  }
+  #edit:hover {
+    background-color: #FFB085 !important;
+    color: white !important;
+  }
+  #back{
+    margin-top: 1%;
+    margin-left: 93%;
+    font-size: 18px;;
+    display: none;
+  }
+
+  .update{
+    display: none;
+  }
+  .newdata{
+    margin-top: 3%;
+    margin-left: 3%;
+    height: 300px;
+    width: 700px;
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+
 
 
 </style>
@@ -99,7 +206,13 @@
 
 {% block content %}
 <body>
+
 <div class="wrapper" style="height: fit-content">
+  <input type="checkbox" id="check">
+    <label for="check">
+      <i class="fas fa-bars" id="open"></i>
+      <i class="fas fa-times" id="close"></i>
+    </label>
   <div class="sidenav" id="pls">
     <header>Mój profil</header>
 
@@ -116,82 +229,136 @@
 
 <div class="content" style="position: relative;">
 
-  <div id="mydata" class="data" style="margin-left: 20%;  margin-bottom:5%; height: fit-content" >
+  <div id="mydata" class="data" style="margin-left: 17%;  margin-bottom:5%; height: 800px" >
     <h1 style="margin-top: 3%; letter-spacing: 1px; font-size: 50px; color: #C0EDA6;
             padding: 0 0 15px 0; border-bottom: 1px solid #FFB085;">Moje dane</h1>
 
     <div class="box">
-      <p id="info">Nazwa użytkownika: {{ user.username }}</p>
-      {% if user.email %}
-      <p id="info">Adres email: {{ user.email }}</p>
-      {% else %}
-      <p id="info">Adres email: brak</p>
-      {% endif %}
+      <button type="button" id="edit" onclick="update()">Edytuj dane</button>
+      <a id="back" onclick="back()"><i class="fa-solid fa-arrow-left"></i>
+        <label>Wróć</label>
+      </a>
+      <!--<button type="button" id="back" onclick="back()">Wróć</button>-->
+      <table id="table">
 
-      <form action="" method="post">
+      <tr id="info">
+        <td style="font-weight: bold; letter-spacing: 1px">Nazwa użytkownika:</td>
+        <td id="infdata">{{ user.username }}</td>
+        </tr>
+
+      {% if user.email %}
+      <tr id="info">
+        <td style="font-weight: bold; letter-spacing: 1px">Adres email: </td>
+        <td id="infdata">{{ user.email }}</td></tr>
+      {% else %}
+      <tr id="info">
+        <td style="font-weight: bold; letter-spacing: 1px">Adres email:</td>
+        <td id="infdata">brak</td></tr>
+      {% endif %}
+      <tr id="info">
+        <td style="font-weight: bold; letter-spacing: 1px">Imię:</td>
+        <td id="infdata">{{ customer.first_name }}</td></tr>
+      {% if customer.second_name %}
+      <tr id="info">
+        <td style="font-weight: bold; letter-spacing: 1px">Drugie imię: </td>
+        <td id="infdata">{{ customer.second_name }}</td></tr>
+      {% else %}
+      <tr id="info">
+        <td style="font-weight: bold; letter-spacing: 1px">Drugie imię:</label>
+        <td id="infdata">brak</td></tr>
+      {% endif %}
+      <tr id="info">
+        <td style="font-weight: bold; letter-spacing: 1px">Nazwisko:</td>
+        <td id="infdata">{{ customer.last_name }}</td></tr>
+      <tr id="info">
+        <td style="font-weight: bold; letter-spacing: 1px">Data urodzenia:</td>
+        <td id="infdata">{{ customer.date_of_birth }}</td></tr>
+      <tr id="info">
+        <td style="font-weight: bold; letter-spacing: 1px">Numer telefonu:</td>
+        <td id="infdata">{{ customer.phone_number}}</td></tr>
+      <tr id="info">
+        <td style="font-weight: bold; letter-spacing: 1px">Płeć:</td>
+        {% if customer.gender == 'f'%}
+        <td id="infdata">Kobieta</td></tr>
+        {% else %}
+        <td id="infdata">Mężczyzna</td></tr>
+        {% endif %}
+      </table>
+
+
+      <form action="" method="post" class="update">
         {% csrf_token %}
-        <table>
+        <table class="newdata">
 
           {{ customer_form.as_table }}
 
         </table>
-        <input type="submit" value="Zatwierdź" class="btn btn-outline-dark" id="confirm">
+        <button type="submit" value="Zatwierdź" id="confirm">Zatwierdź</button>
       </form>
 
     </div>
   </div>
 
-<div id="history" class="data" style="margin-left: 20%">
-  <h1 style="margin-top: 3%; letter-spacing: 1px; font-size: 50px; color: #C0EDA6;
+  <div id="history" class="data" style="margin-left: 17%">
+    <h1 style="margin-top: 3%; letter-spacing: 1px; font-size: 50px; color: #C0EDA6;
             padding: 0 0 15px 0; border-bottom: 1px solid #FFB085">Historia zamówień:</h1>
-  {% for order in orders %}
-  <table class="data-table">
-
-    <thead>
+    {% for order in orders %}
+    <table class="data-table">
+      <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px; margin-top: 2%">Nr. zamówienia: </label>
+        <label style="margin-left: 2%"># {{order.id}}</label>
+      <br>
+      <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px">Data: </label>
+        <label style="margin-left: 2%">{{order.date}}</label>
+      <br>
+      <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px">Status: </label>
+        <label style="margin-left: 2%">{{order.get_status_display}}</label>
+      <!--<thead>
       <tr>
         <th>Nr. zamównienia</th>
         <th>Data</th>
         <th>Status</th>
       </tr>
-    </thead>
-    <tr>
-      <td># {{ order.id }}</td>
-      <td>{{ order.date }}</td>
-      <td>{{ order.get_status_display }}</td>
-    </tr>
-    <tr>
-      <th>Produkt</th>
-      <th>Cena</th>
-      <th>Liczba sztuk</th>
-    </tr>
-    {% for order_item in order.orderitem_set.all %}
-    <tr>
-      <td>
-        <a href="{% url 'core:detail' order_item.item.pk %}">
-        {{ order_item.item.name }}
-        </a>
-      </td>
-      <td>
-        {% if order_item.item.price_sale %}
-        {{ order_item.item.price_sale }}
-        {% else %}
-          {{ order_item.item.price }}
-        {% endif %}
-      </td>
-      <td>
-        {{ order_item.n_pieces }}
-      </td>
-    </tr>
-    {% endfor %}
-    <tr style="font-size: large">
-      <th>Koszt całkowity:</th>
-      <td colspan="2" style="text-align: center"><strong>{{ order.total_price }} zł</strong></td>
-    </tr>
-    {% endfor %}
+      </thead>
+      <tr>
+        <td># {{ order.id }}</td>
+        <td>{{ order.date }}</td>
+        <td>{{ order.get_status_display }}</td>
+      </tr> -->
+      <thead>
+      <tr>
+        <th>Produkt</th>
+        <th>Cena</th>
+        <th>Liczba sztuk</th>
+      </tr>
+      </thead>
+      {% for order_item in order.orderitem_set.all %}
+      <tr>
+        <td>
+          <a style="color: black" href="{% url 'core:detail' order_item.item.pk %}">
+            {{ order_item.item.name }}
+          </a>
+        </td>
+        <td>
+          {% if order_item.item.price_sale %}
+          {{ order_item.item.price_sale }} zł
+          {% else %}
+          {{ order_item.item.price }} zł
+          {% endif %}
+        </td>
+        <td>
+          {{ order_item.n_pieces }}
+        </td>
+      </tr>
+      {% endfor %}
+      <tr style="font-size: large; border-top: 1px solid black">
+        <th style="letter-spacing: 1px">Koszt całkowity:</th>
+        <td colspan="2" style="text-align: center"><strong>{{ order.total_price }} zł</strong></td>
+      </tr>
+      {% endfor %}
 
-  </table>
-  </h3>
-</div>
+    </table>
+
+  </div>
 </div>
 
 
@@ -219,6 +386,26 @@
 
   }
 
+  function all(){
+    document.querySelector('#mydata').style.display="block";
+    document.querySelector('#history').style.display="block";
+    document.querySelector('#md').style.fontWeight="normal";
+    document.querySelector('#his').style.fontWeight="normal";
+  }
+
+  function update(){
+    document.querySelector('#table').style.display="none";
+    document.querySelector('.update').style.display="block";
+    document.querySelector('#edit').style.display="none";
+    document.querySelector('#back').style.display="block";
+  }
+  function back(){
+    document.querySelector('#table').style.display="block";
+    document.querySelector('.update').style.display="none";
+    document.querySelector('#edit').style.display="block";
+    document.querySelector('#back').style.display="none";
+  }
+
 
 
 </script>
@@ -230,4 +417,3 @@
 
 
 </html>
-
