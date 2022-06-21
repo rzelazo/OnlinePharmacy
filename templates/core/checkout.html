@@ -115,7 +115,7 @@ Checkout
   <form class="col" action="" method="post">
     {% csrf_token %}
     <div class="row justify-content-around" style="margin: auto;">
-      <div class="col-lg-8 d-flex justify-content-center">
+      <div class="col-lg-4 d-flex justify-content-center">
         {% if not user.customer %}
         <fieldset>
           <legend>Proszę podać dane klienta</legend>
@@ -125,7 +125,7 @@ Checkout
         </fieldset>
       </div>
       {% endif %}
-      <div class="col-lg-6 d-flex justify-content-center">
+      <div class="col-lg-4 d-flex justify-content-center">
         <fieldset>
           <legend>Proszę podać adres dostawy</legend>
           <table>
@@ -133,7 +133,15 @@ Checkout
           </table>
         </fieldset>
       </div>
-    </div>
+      <div class="col-lg-4 d-flex justify-content-center">
+          <fieldset>
+            <legend>Proszę podać metody dostawy i płatności</legend>
+            <table>
+              {{ orderMethodsForm.as_table }}
+            </table>
+          </fieldset>
+        </div>
+      </div>
     <div class="d-flex justify-content-end">
       <input class="btn btn-outline-dark" type="submit" value="Przejdź do płatności" id="guzik">
     </div>

@@ -77,3 +77,7 @@ class OrderMethodsForm(NoLabelsModelForm):
     class Meta:
         model = Order
         fields = ["delivery_method", "payment_method"]
+        labels = {
+            "delivery_method": "Sposób dostawy",
+            "payment_method": "Metoda płatności"
+        }
