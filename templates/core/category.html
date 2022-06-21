@@ -87,16 +87,16 @@
   }
 
   .zobacz2 {
-    height: 50px;
+    height: 40px;
     width: 100%;
     background-color: #9d9d9d;
     color: white !important;
     opacity: 0;
     position: absolute;
-    bottom: 35%;
+    bottom: 30%;
     left: 0px;
     transition: 1s;
-    font-size: 22px;
+    font-size: 20px;
     border-radius: 30px;
     border: 1px white;
   }
@@ -139,10 +139,9 @@
     border: 2px solid #9d9d9d;
   }
 
+ /* filtracja */
 
-  /* filtracja */
-
-  #filter {
+ #filter {
     margin-top: 15%;
   }
 
@@ -174,7 +173,24 @@
   input[type=range]:focus::-webkit-slider-thumb {
     box-shadow: none;
     background: #C0EDA6;
-}
+  }
+
+  .filter {
+    width: 60%;
+    font-size: 16px;
+    color: black !important;
+    border: solid 2px #C0EDA6;
+    border-radius: 30px;
+    margin-top: 20px;
+    padding: 2% 10% 2% 10%;
+    align-self: center;
+  }
+
+  .filter:hover {
+    background-color: #C0EDA6 !important;
+    color: white !important;
+  }
+
 
 </style>
 {% endblock %}
@@ -184,7 +200,7 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-3">
+    <div class="col-md-12 col-lg-3">
       <div class="card px-2" id="filter">
         <h3 class="text-center" style="padding-top: 10px;">Filtruj produkty</h3>
         <hr>
@@ -193,19 +209,20 @@
           <form id="price-range-form">
             <label for="min-price" class="form-label">Cena minimalna: </label>
             <span id="min-price-txt" style="font-weight: bold;">0 zł</span>
-            <input type="range" class="form-range" min="0" max="99" id="min-price" step="1" value="0">
+            <input type="range" class="form-range" min="0" max='99' id="min-price" step="1" value="0">
             <label for="max-price" class="form-label">Cena maksymalna: </label>
             <span id="max-price-txt" style="font-weight: bold;">100 zł</span>
-            <input type="range" class="form-range" min="1" max="100" id="max-price" step="1" value="100"
+            <input type="range" class="form-range" min='1' max="100" id="max-price" step="1" value="100"
               style="color:#C0EDA6;">
           </form>
+          <button class="filter" id="filterbutton" onclick="filterByPrice()">Filtruj</button>
         </div>
       </div>
     </div>
-    <div class="col-9">
+    <div class="col-md-12 col-lg-9">
       <div id="leki">
         {% if item_list %}
-        <div class="d-flex justify-content-around p-3" style="background-color: white;">
+        <div class="d-flex justify-content-around p-3" style="background-color: white; flex-wrap: wrap;">
           {% for item in item_list %}
           {% if item.in_stock == 0 %}
           <div class="d-flex flex-column col-4" id="col">
@@ -276,7 +293,7 @@
 
   </div>
 </div>
-
+</div>
 
 {% block extra_scripts %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -285,21 +302,58 @@
 let min_price = 0;
 let max_price = 100;
 
-$(document).ready(function () {
-    showAllItems();//Display all items with no filter applied
+$(document).on("input change", "#min-price", function() {
+  var scrolled_value = $(this).val();
+  var limiting_value = parseInt($('#max-price').val())-1;
+
+  if (scrolled_value > limiting_value)
+    $(this).val(limiting_value);
+});
+
+$(document).on("input change", "#max-price", function() {
+  var scrolled_value2 = $(this).val();
+  var limiting_value2 = parseInt($('#min-price').val())+1;
+
+  if (scrolled_value2 < limiting_value2)
+    $(this).val(limiting_value2);
 });
 
 $('#min-price').on("change mousemove", function () {
-    min_price = parseInt($('#min-price').val());
-    $('#min-price-txt').text(min_price + ' zł');
-    showItemsFiltered();
+      min_price = parseInt($('#min-price').val());
+      $('#min-price-txt').text(min_price + ' zł');
 });
 
 $('#max-price').on("change mousemove", function () {
-    max_price = parseInt($('#max-price').val());
-    $('#max-price-txt').text(max_price + ' zł');
-    showItemsFiltered();
+      max_price = parseInt($('#max-price').val());
+      $('#max-price-txt').text(max_price + ' zł');
 });
+
+function filterByPrice() {
+  print('elo')
+    let url = 'core/price-filtered/';
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json',
+            'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({'min_price': min_price, 'max_price' : max_price})
+    })
+
+        .then((response) => {
+            return response.json()
+        })
+
+        .then((data) => {
+            console.log('data:', data)
+            location.reload()
+        })
+    }
+
+
+
+
 
 </script>
 {% endblock extra_scripts %}
