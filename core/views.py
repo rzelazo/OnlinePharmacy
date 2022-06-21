@@ -10,6 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.conf import settings
+from django.db.models import Q
 import logging
 
 
@@ -171,21 +172,54 @@ class RemoveFromCartView(View):
         return redirect(to=reverse('core:cart'))
 
 
-class CategoryFilteredView(ItemListView):
-    model = Item
+class CategoryFilteredView(View):
     template_name = "core/category.html"
-    context_object_name = "item_list"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["category_name"] = SubCategory.objects.get(pk=self.kwargs['pk']).name
-        return context
-
-    def get_queryset(self):
+    def get(self, request, pk):
         """
         Filter items on subcategory id.
         """
-        return self.model.objects.filter(subcategories=self.kwargs['pk'])
+        category_name = SubCategory.objects.get(pk=pk).name
+        context = {'category_name': category_name}
+
+        min_price = request.session.pop('min_price', False)
+        max_price = request.session.pop('max_price', False)
+        if min_price and max_price:
+            # if user selected the minimal and maximal product price -> filter product list by subcategory and price range
+            item_list = Item.objects.filter(
+                Q(subcategories=pk) & (
+                    Q(price_sale__isnull=False) & Q(price_sale__gte=min_price) & Q(price_sale__lte=max_price) |
+                    Q(price_sale__isnull=True) & Q(price__gte=min_price) & Q(price__lte=max_price)
+                )
+
+            )
+            context['min_price'] = min_price
+            context['max_price'] = max_price
+        else:
+            item_list = Item.objects.filter(subcategories=pk)
+            # set default price range to render on price range sliders
+            context['min_price'] = 0
+            context['max_price'] = 100
+
+        context['item_list'] = item_list
+
+        return render(request, self.template_name, context=context)
+
+    def post(self, request, pk):
+        """
+        Takes user input for filtering item list by price range.
+        """
+        min_price = request.POST.get('min-price', False)
+        max_price = request.POST.get('max-price', False)
+
+        if min_price and max_price:
+            request.session['min_price'] = min_price
+            request.session['max_price'] = max_price
+            return redirect(request.path)
+
+        else:
+            messages.add_message(request, level=messages.WARNING, message="Error filtering items")
+            return redirect(request.path)
 
 
 class CheckoutView(View):
@@ -262,8 +296,8 @@ class CheckoutView(View):
             for cart_item in cart_item_list:
                 cart_item.delete()
 
-            messages.add_message(request, level=messages.SUCCESS, message="Zamówienie wykonane pomyślnie!")
-            return redirect(to=reverse('core:index'))
+            messages.add_message(request, level=messages.SUCCESS, message=f"Zamówienie #{order.pk} wykonane pomyślnie!")
+            return redirect(to=reverse('core:summary'))
 
         # if form is invalid, show errors to the user
         else:

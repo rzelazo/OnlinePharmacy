@@ -206,16 +206,17 @@
         <hr>
         <h5 style="padding-left: 5%;">CENA:</h5>
         <div class="card-body">
-          <form id="price-range-form">
+          <form id="price-range-form" method="post" action="">
+            {% csrf_token %}
             <label for="min-price" class="form-label">Cena minimalna: </label>
-            <span id="min-price-txt" style="font-weight: bold;">0 zł</span>
-            <input type="range" class="form-range" min="0" max='99' id="min-price" step="1" value="0">
+            <span id="min-price-txt" style="font-weight: bold;">{{ min_price }} zł</span>
+            <input type="range" class="form-range" min="0" max='99' id="min-price" step="1" value="{{ min_price }}" name="min-price">
             <label for="max-price" class="form-label">Cena maksymalna: </label>
-            <span id="max-price-txt" style="font-weight: bold;">100 zł</span>
-            <input type="range" class="form-range" min='1' max="100" id="max-price" step="1" value="100"
+            <span id="max-price-txt" style="font-weight: bold;">{{ max_price }} zł</span>
+            <input type="range" class="form-range" min='1' max="100" id="max-price" step="1" value="{{ max_price }}" name="max-price"
               style="color:#C0EDA6;">
+            <button type="submit" class="filter" id="filterbutton">Filtruj</button>
           </form>
-          <button class="filter" id="filterbutton" onclick="filterByPrice()">Filtruj</button>
         </div>
       </div>
     </div>

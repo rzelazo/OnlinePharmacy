@@ -32,42 +32,14 @@ Checkout
     font-size: 20px;
     padding-right: 10px;
   }
-  #id_city{
+
+  .adres input {
     font-size: 20px;
     padding-bottom: 5px;
     padding-top: 5px;
     text-align: left;
   }
-  #id_country{
-    font-size: 20px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    text-align: left;
-  }
-  #id_postal_code{
-    font-size: 20px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    text-align: left;
-  }
-  #id_street{
-    font-size: 20px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    text-align: left;
-  }
-  #id_street_number{
-    font-size: 20px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    text-align: left;
-  }
-  #id_local_number{
-    font-size: 20px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    text-align: left;
-  }
+
   th{
     text-align: right;
   }
@@ -113,24 +85,28 @@ Checkout
   </table>
 
 {% endfor %}
+</div>
 
 <div class="row justify-content-end">
   <div class="col-lg-2">
     <h3>Do zapłaty: {{ total_price }} zł</h3>
   </div>
-  <div class="row">
-    <form action="" method="post">
+</div>
+<div class="row justify-content-center">
+    <form class="col-lg-6 offset-lg-3 " action="" method="post">
+      <div class="row justify-content-center">
       <fieldset>
         <legend>Proszę podać adres dostawy</legend>
         {% csrf_token %}
-        <table id="small" class="adres">
+        <table>
           {{ form.as_table }}
         </table>
-        <input id="guzik" class="btn btn-success" type="submit" value="Przejdź do płatności">
       </fieldset>
+    <span class="input-group-btn" style="position: relative ;right: 0">
+    <input class="btn btn-success" type="submit" value="Przejdź do płatności">
+    </span>
+    </div>
     </form>
-  </div>
-</div>
 </div>
 
 
