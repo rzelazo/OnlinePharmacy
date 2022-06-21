@@ -154,12 +154,12 @@ class Customer(models.Model):
     first_name = models.CharField(max_length=30, help_text="Customer's first name")
     second_name = models.CharField(max_length=30, null=True, blank=True, help_text="Customer's second name")
     last_name = models.CharField(max_length=30, help_text="Customer's last name")
-    date_of_birth = models.DateField(validators=[validate_date], help_text="Customer's date of birth")
+    date_of_birth = models.DateField(validators=[validate_date], help_text="Customer's date of birth", null=True, blank=True)
     phone_number = models.CharField(max_length=9, validators=[validate_phone_number],
                                     help_text="Customer's phone number")
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, help_text="Customer's gender")
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, help_text="Customer's gender", null=True, blank=True)
     user = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                             help_text="User account associated with this customer")
+                             help_text="User account associated with this customer", null=True, blank=True)
 
     address = models.ForeignKey(to="Address", on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -194,8 +194,8 @@ class Order(models.Model):
 
     total_price = models.DecimalField(max_digits=7, decimal_places=2, default=0.00, help_text="Total price of the order")
 
-    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                             help_text="User that have made this order", null=True)
+    customer = models.ForeignKey(to="Customer", on_delete=models.CASCADE,
+                             help_text="Customer that have made this order")
 
     address = models.ForeignKey(to="Address", on_delete=models.CASCADE)
 
@@ -245,7 +245,10 @@ class Address(models.Model):
     postal_code = models.CharField(max_length=6, validators=[validate_postal_code])
     street = models.CharField(max_length=60)
     street_number = models.CharField(max_length=5)
-    local_number = models.CharField(max_length=5)
+    local_number = models.CharField(max_length=5, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Addresses"
+
+    def __str__(self):
+        return f"{self.street} {self.street_number}{'/' + self.local_number if self.local_number else ''} {self.postal_code} {self.city} {self.country}"

@@ -9,6 +9,7 @@ from django.core.validators import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
+from django.utils.html import escape
 from django.conf import settings
 from django.db.models import Q
 import logging
@@ -56,10 +57,10 @@ def get_or_create_cart(request):
 
 
 def calc_total_price(container_item_list):
-    
-    total_price = sum(container_item.item.price_sale * container_item.n_pieces if container_item.item.price_sale is not None
-                      else container_item.item.price * container_item.n_pieces
-                      for container_item in container_item_list)
+    total_price = sum(
+        container_item.item.price_sale * container_item.n_pieces if container_item.item.price_sale is not None
+        else container_item.item.price * container_item.n_pieces
+        for container_item in container_item_list)
     return total_price
 
 
@@ -69,7 +70,6 @@ class ItemListView(ListView):
     context_object_name = 'item_list'
 
     def get_queryset(self):
-
         return self.model.objects.all()[:4]
 
 
@@ -79,7 +79,6 @@ class KafelkiItemListView(ListView):
     context_object_name = 'item_list'
 
     def get_queryset(self):
-
         return self.model.objects.all()
 
 
@@ -188,13 +187,14 @@ class CategoryFilteredView(View):
             # if user selected the minimal and maximal product price -> filter product list by subcategory and price range
             item_list = Item.objects.filter(
                 Q(subcategories=pk) & (
-                    Q(price_sale__isnull=False) & Q(price_sale__gte=min_price) & Q(price_sale__lte=max_price) |
-                    Q(price_sale__isnull=True) & Q(price__gte=min_price) & Q(price__lte=max_price)
+                        Q(price_sale__isnull=False) & Q(price_sale__gte=min_price) & Q(price_sale__lte=max_price) |
+                        Q(price_sale__isnull=True) & Q(price__gte=min_price) & Q(price__lte=max_price)
                 )
 
             )
-            context['min_price'] = min_price
-            context['max_price'] = max_price
+            # min_price and max_price are user inputs rendered directly in the page - html escaping will prevent XSS attack
+            context['min_price'] = escape(min_price)
+            context['max_price'] = escape(max_price)
         else:
             item_list = Item.objects.filter(subcategories=pk)
             # set default price range to render on price range sliders
@@ -218,7 +218,7 @@ class CategoryFilteredView(View):
             return redirect(request.path)
 
         else:
-            messages.add_message(request, level=messages.WARNING, message="Error filtering items")
+            messages.add_message(request, level=messages.WARNING, message="Błąd filtrowania produktów")
             return redirect(request.path)
 
 
@@ -233,17 +233,25 @@ class CheckoutView(View):
 
         user = request.user
         # check if user is logged in and if user is a customer and if it has address bound to his account
-        if user.is_authenticated and hasattr(user, "customer") and hasattr(user.customer, "address"):
-            customer_address = user.customer.address
-            # pre-fill the checkout form with address bound to the customer (e.g. address used by the last checkout)
-            form = CheckoutForm(instance=customer_address)
+        if user.is_authenticated and hasattr(user, "customer"):
+            # pre-fill the checkout form with customer data
+            customerForm = CustomerCheckoutForm(instance=user.customer)
+            if hasattr(user.customer, "address"):
+                customer_address = user.customer.address
+                # pre-fill the checkout form with address bound to the customer (e.g. address used by the last checkout)
+                form = CheckoutForm(instance=customer_address)
+            else:
+                form = CheckoutForm()
         else:
             form = CheckoutForm()
+            customerForm = CustomerCheckoutForm()
 
-        context = {"cart_item_list": cart_item_list, "total_price": total_price, "form": form}
+        context = {"cart_item_list": cart_item_list, "total_price": total_price, "form": form,
+                   "customerForm": customerForm}
         return render(request, template_name=self.template_name, context=context)
 
     def post(self, request):
+        user = request.user
         cart, cart_created = get_or_create_cart(request)
         cart_item_list = CartItem.objects.filter(cart=cart).order_by('item__name')
 
@@ -253,21 +261,26 @@ class CheckoutView(View):
         form = CheckoutForm(data=request.POST)
 
         if form.is_valid():
-
-            address, address_created = Address.objects.get_or_create(**form.cleaned_data)
-            user = request.user
-
-            if user.is_authenticated:
-                order = Order.objects.create(user=user, address=address)
-
-                # if user is customer - bind the created or retrieved address to his account
-                # the address checkout form will be then automatically pre-filled by the next order
-                if hasattr(user, "customer"):
-                    user.customer.address = address
-                    user.customer.save()
-
+            if hasattr(user, 'customer'):
+                customer = user.customer
             else:
-                order = Order.objects.create(address=address)
+                customerForm = CustomerCheckoutForm(data=request.POST)
+                if customerForm.is_valid():
+                    customer, customer_created = Customer.objects.get_or_create(**customerForm.cleaned_data)
+                else:
+                    total_price = calc_total_price(cart_item_list)
+                    return render(request, template_name=self.template_name,
+                                  context={'cart_item_list': cart_item_list, 'total_price': total_price, 'form': form,
+                                           'customerForm': customerForm})
+
+            user = request.user
+            address, address_created = Address.objects.get_or_create(**form.cleaned_data)
+            customer.address = address
+            if user.is_authenticated:
+                customer.user = user
+            customer.save()
+
+            order = Order.objects.create(address=address, customer=customer)
 
             ordered_items = [OrderItem(order=order, item=cart_item.item, n_pieces=cart_item.n_pieces)
                              for cart_item in cart_item_list]
@@ -302,8 +315,10 @@ class CheckoutView(View):
         # if form is invalid, show errors to the user
         else:
             total_price = calc_total_price(cart_item_list)
+            customerForm = CustomerCheckoutForm()
             return render(request, template_name=self.template_name,
-                          context={'cart_item_list': cart_item_list, 'total_price':total_price, 'form': form})
+                          context={'cart_item_list': cart_item_list, 'total_price': total_price, 'form': form,
+                                   'customerForm': customerForm})
 
 
 class UserView(View):
@@ -325,8 +340,11 @@ class UserView(View):
             customer = None
             customer_form = CustomerForm()
 
-        orders = Order.objects.filter(user=user).order_by("-date")
-        context = {"user": user, "customer": customer, "customer_form": customer_form, "orders": orders}
+        email_form = EmailForm(instance=user)
+
+        orders = Order.objects.filter(customer__user=user).order_by("-date")
+        context = {"user": user, "customer": customer, "customer_form": customer_form, "orders": orders,
+                   "email_form": email_form}
 
         return render(request, template_name="core/user.html", context=context)
 
@@ -339,22 +357,17 @@ class UserView(View):
         if hasattr(user, "customer"):
             customer = user.customer
             customer_form = CustomerForm(instance=customer, data=request.POST)
+            email_form = EmailForm(instance=user, data=request.POST)
             logging.debug(customer)
         else:
             raise Http404("Klient nie istnieje")
 
-        if customer_form.is_valid():
+        if customer_form.is_valid() and email_form.is_valid():
             customer_form.save()
+            email_form.save()
             messages.add_message(request, level=messages.SUCCESS, message="Dane klienta zaktualizowane")
             return redirect(to=request.path)
         else:
-            orders = Order.objects.filter(user=user).order_by("-date")
+            orders = Order.objects.filter(customer__user=user).order_by("-date")
             context = {"user": user, "customer": customer, "customer_form": customer_form, "orders": orders}
             return render(request, template_name="core/user.html", context=context)
-
-
-
-
-
-
-

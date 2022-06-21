@@ -94,10 +94,18 @@ Checkout
 </div>
 <div class="row justify-content-center">
     <form class="col-lg-6 offset-lg-3 " action="" method="post">
+        {% csrf_token %}
       <div class="row justify-content-center">
+        {% if not user.customer %}
+      <fieldset>
+        <legend>Proszę podać dane klienta</legend>
+        <table>
+          {{ customerForm.as_table }}
+        </table>
+      </fieldset>
+       {% endif %}
       <fieldset>
         <legend>Proszę podać adres dostawy</legend>
-        {% csrf_token %}
         <table>
           {{ form.as_table }}
         </table>

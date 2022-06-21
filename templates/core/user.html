@@ -270,7 +270,7 @@
         <td id="infdata">{{ customer.second_name }}</td></tr>
       {% else %}
       <tr id="info">
-        <td style="font-weight: bold; letter-spacing: 1px">Drugie imię:</label>
+        <td style="font-weight: bold; letter-spacing: 1px">Drugie imię:</td>
         <td id="infdata">brak</td></tr>
       {% endif %}
       <tr id="info">
@@ -296,6 +296,7 @@
         {% csrf_token %}
         <table class="newdata">
 
+          {{ email_form.as_table }}
           {{ customer_form.as_table }}
 
         </table>
@@ -310,6 +311,7 @@
             padding: 0 0 15px 0; border-bottom: 1px solid #FFB085">Historia zamówień:</h1>
     {% for order in orders %}
     <table class="data-table">
+
       <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px; margin-top: 2%">Nr. zamówienia: </label>
         <label style="margin-left: 2%"># {{order.id}}</label>
       <br>

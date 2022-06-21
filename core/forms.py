@@ -1,5 +1,6 @@
 from django import forms
 from .models import *
+from django.contrib.auth import get_user_model
 
 
 class AddItemToCartForm(forms.Form):
@@ -24,7 +25,6 @@ class CustomerForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.Meta.instance = self
         for fieldname in self.Meta.fields:
             self.fields[fieldname].help_text = None
 
@@ -44,4 +44,28 @@ class CustomerForm(forms.ModelForm):
 
         widgets = {
             "date_of_birth": forms.DateInput(attrs={"type": "date"})
+        }
+
+
+class EmailForm(forms.ModelForm):
+    class Meta:
+        model = get_user_model()
+        fields = ["email"]
+
+
+class CustomerCheckoutForm(CustomerForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for fieldname in self.Meta.fields:
+            self.fields[fieldname].help_text = None
+
+    class Meta:
+        model = Customer
+        fields = ["first_name", "second_name", "last_name", "phone_number"]
+
+        labels = {
+            "first_name": "Imię",
+            "second_name": "Drugie imię",
+            "last_name": "Nazwisko",
+            "phone_number": "Numer telefonu",
         }
