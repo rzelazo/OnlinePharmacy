@@ -66,7 +66,7 @@
     margin-left: 5%;
     font-size: 20px;
   }
-   .data-table{
+  .data-table{
     margin-bottom: 5%;
     margin-top: 3%;
     width: 1040px;
@@ -162,6 +162,20 @@
     background-color: #FFB085 !important;
     color: white !important;
   }
+
+  #hello{
+    margin-left: 17%;
+    margin-top: 2%;
+    min-height: 500px;
+    position: relative;
+  }
+
+  #head{
+    letter-spacing: 1px;
+    color: #C0EDA6;
+    font-size: 50px;
+    border-bottom: 1px solid #FFB085;
+  }
   #table{
     margin-left: 5%;
   }
@@ -215,12 +229,14 @@
 
 <div class="wrapper" style="height: fit-content">
   <input type="checkbox" id="check">
-    <label for="check">
-      <i class="fas fa-bars" id="open"></i>
-      <i class="fas fa-times" id="close"></i>
-    </label>
+  <label for="check">
+    <i class="fas fa-bars" id="open"></i>
+    <i class="fas fa-times" id="close"></i>
+  </label>
   <div class="sidenav" id="pls">
-    <header>Mój profil</header>
+    <div id="first-page" onclick="first()">
+      <header>Mój profil</header>
+    </div>
 
     <ul>
       <li class="list" id="md"><a class="active"><i class="fa-regular fa-user"></i>
@@ -235,7 +251,29 @@
 
 <div class="content" style="position: relative;">
 
-  <div id="mydata" class="data" style="margin-left: 17%;  margin-bottom:5%; height: 800px" >
+  <div id="hello">
+    <h1 id="head">Mój profil</h1>
+    {% for order in orders %}
+    {% if order.get_status_display == 'Oczekiwanie na zapłatę'%}
+    <label style="margin-top: 1%; font-size: 20px">Twoje zamówienie o numerze #{{order.id}}</label>
+    <label style="font-size: 20px; color: #ffc829"> oczekuje na zapłatę</label><label style="font-size: 20px">! </label>
+    <br>
+    {% elif order.get_status_display == 'W realizacji'%}
+    <label style="margin-top: 1%; font-size: 20px">Twoje zamówienie o numerze #{{order.id}}</label>
+    <label style="font-size: 20px; color: #1d1daa"> przyjęto do realizacji</label><label style="font-size: 20px">! </label>
+    <br>
+    {% elif order.get_status_display == 'Wysłano'%}
+    <label style="margin-top: 1%; font-size: 20px">Twoje zamówienie o numerze #{{order.id}} jest już w drodze!</label>
+    <br>
+    {% endif %}
+    {% endfor %}
+    <div style="position:absolute; bottom: 3%">
+      <label style="font-size: 16px;">Szczegóły wszystkich zamówień znajdziesz w zakładce </label>
+      <label style="font-size: 21px; font-weight: bold; color: #C0EDA6; letter-spacing: 1px">Historia zamówień</label><label>.</label>
+    </div>
+  </div>
+
+  <div id="mydata" class="data" style="margin-left: 17%;  margin-bottom:5%; height: 800px; display: none" >
     <h1 style="margin-top: 3%; letter-spacing: 1px; font-size: 50px; color: #C0EDA6;
             padding: 0 0 15px 0; border-bottom: 1px solid #FFB085;">Moje dane</h1>
 
@@ -247,45 +285,45 @@
       <!--<button type="button" id="back" onclick="back()">Wróć</button>-->
       <table id="table">
 
-      <tr id="info">
-        <td style="font-weight: bold; letter-spacing: 1px">Nazwa użytkownika:</td>
-        <td id="infdata">{{ user.username }}</td>
+        <tr id="info">
+          <td style="font-weight: bold; letter-spacing: 1px">Nazwa użytkownika:</td>
+          <td id="infdata">{{ user.username }}</td>
         </tr>
 
-      {% if user.email %}
-      <tr id="info">
-        <td style="font-weight: bold; letter-spacing: 1px">Adres email: </td>
-        <td id="infdata">{{ user.email }}</td></tr>
-      {% else %}
-      <tr id="info">
-        <td style="font-weight: bold; letter-spacing: 1px">Adres email:</td>
-        <td id="infdata">brak</td></tr>
-      {% endif %}
-      <tr id="info">
-        <td style="font-weight: bold; letter-spacing: 1px">Imię:</td>
-        <td id="infdata">{{ customer.first_name }}</td></tr>
-      {% if customer.second_name %}
-      <tr id="info">
-        <td style="font-weight: bold; letter-spacing: 1px">Drugie imię: </td>
-        <td id="infdata">{{ customer.second_name }}</td></tr>
-      {% else %}
-      <tr id="info">
-        <td style="font-weight: bold; letter-spacing: 1px">Drugie imię:</td>
-        <td id="infdata">brak</td></tr>
-      {% endif %}
-      <tr id="info">
-        <td style="font-weight: bold; letter-spacing: 1px">Nazwisko:</td>
-        <td id="infdata">{{ customer.last_name }}</td></tr>
-      <tr id="info">
-        <td style="font-weight: bold; letter-spacing: 1px">Data urodzenia:</td>
-        <td id="infdata">{{ customer.date_of_birth }}</td></tr>
-      <tr id="info">
-        <td style="font-weight: bold; letter-spacing: 1px">Numer telefonu:</td>
-        <td id="infdata">{{ customer.phone_number}}</td></tr>
-      <tr id="info">
-        <td style="font-weight: bold; letter-spacing: 1px">Płeć:</td>
-        {% if customer.gender == 'f'%}
-        <td id="infdata">Kobieta</td></tr>
+        {% if user.email %}
+        <tr id="info">
+          <td style="font-weight: bold; letter-spacing: 1px">Adres email: </td>
+          <td id="infdata">{{ user.email }}</td></tr>
+        {% else %}
+        <tr id="info">
+          <td style="font-weight: bold; letter-spacing: 1px">Adres email:</td>
+          <td id="infdata">brak</td></tr>
+        {% endif %}
+        <tr id="info">
+          <td style="font-weight: bold; letter-spacing: 1px">Imię:</td>
+          <td id="infdata">{{ customer.first_name }}</td></tr>
+        {% if customer.second_name %}
+        <tr id="info">
+          <td style="font-weight: bold; letter-spacing: 1px">Drugie imię: </td>
+          <td id="infdata">{{ customer.second_name }}</td></tr>
+        {% else %}
+        <tr id="info">
+          <td style="font-weight: bold; letter-spacing: 1px">Drugie imię:</label>
+          <td id="infdata">brak</td></tr>
+        {% endif %}
+        <tr id="info">
+          <td style="font-weight: bold; letter-spacing: 1px">Nazwisko:</td>
+          <td id="infdata">{{ customer.last_name }}</td></tr>
+        <tr id="info">
+          <td style="font-weight: bold; letter-spacing: 1px">Data urodzenia:</td>
+          <td id="infdata">{{ customer.date_of_birth }}</td></tr>
+        <tr id="info">
+          <td style="font-weight: bold; letter-spacing: 1px">Numer telefonu:</td>
+          <td id="infdata">{{ customer.phone_number}}</td></tr>
+        <tr id="info">
+          <td style="font-weight: bold; letter-spacing: 1px">Płeć:</td>
+          {% if customer.gender == 'f'%}
+          <td id="infdata">Kobieta</td></tr>
         {% else %}
         <td id="infdata">Mężczyzna</td></tr>
         {% endif %}
@@ -306,36 +344,36 @@
     </div>
   </div>
 
-  <div id="history" class="data" style="margin-left: 17%">
+  <div id="history" class="data" style="margin-left: 17%; display: none">
     <h1 style="margin-top: 3%; letter-spacing: 1px; font-size: 50px; color: #C0EDA6;
-            padding: 0 0 15px 0; border-bottom: 1px solid #FFB085">Historia zamówień:</h1>
+            padding: 0 0 15px 0; border-bottom: 1px solid #FFB085">Historia zamówień</h1>
     {% for order in orders %}
     <table class="data-table">
 
       <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px; margin-top: 2%">Nr. zamówienia: </label>
-        <label style="margin-left: 2%"># {{order.id}}</label>
+      <label style="margin-left: 2%"># {{order.id}}</label>
       <br>
       <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px">Data: </label>
-        <label style="margin-left: 2%">{{order.date}}</label>
+      <label style="margin-left: 2%">{{order.date}}</label>
       <br>
       <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px">Metoda dostawy: </label>
-        <label style="margin-left: 2%;">{{order.get_delivery_method_display}}</label>
+      <label style="margin-left: 2%;">{{order.get_delivery_method_display}}</label>
       <br>
       <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px">Metoda płatności: </label>
-        <label style="margin-left: 2%">{{order.get_payment_method_display}}</label>
+      <label style="margin-left: 2%">{{order.get_payment_method_display}}</label>
       <br>
       {% if order.get_status_display == 'Oczekiwanie na zapłatę' %}
       <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px">Status: </label>
-        <label style="margin-left: 2%; color: #ffd700">{{order.get_status_display}}!</label>
+      <label style="margin-left: 2%; color: #ffc829">{{order.get_status_display}}!</label>
 
 
       {% elif order.get_status_display == 'Zrealizowano'%}
       <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px">Status: </label>
-        <label style="margin-left: 2%; color: forestgreen">{{order.get_status_display}}</label>
+      <label style="margin-left: 2%; color: forestgreen">{{order.get_status_display}}</label>
 
       {% elif order.get_status_display == 'Anulowano'%}
       <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px">Status: </label>
-        <label style="margin-left: 2%; color: firebrick">{{order.get_status_display}}</label>
+      <label style="margin-left: 2%; color: firebrick">{{order.get_status_display}}</label>
 
       {% elif order.get_status_display == 'W realizacji'%}
       <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px">Status: </label>
@@ -381,6 +419,7 @@
         <td>
           {{ order_item.n_pieces }}
         </td>
+
       </tr>
       {% endfor %}
       <tr style="font-size: large">
@@ -397,6 +436,7 @@
 
 <script>
 
+
   let list = document.querySelectorAll('.list');
   for(let i=0; i<list.length; i++){
     list[i].onclick=function (){
@@ -410,21 +450,24 @@
         document.querySelector('#his').style.fontWeight='normal';
         document.querySelector('#history').style.display = "none";
         document.querySelector('#mydata').style.display = "block";
+        document.querySelector('#hello').style.display = "none";
       } else if (list[i] === document.querySelector('#his')) {
         document.querySelector('#his').style.fontWeight='bold';
         document.querySelector('#md').style.fontWeight='normal';
         document.querySelector("#mydata").style.display = "none";
         document.querySelector('#history').style.display = "block";
+        document.querySelector('#hello').style.display = "none";
       }
     }
 
   }
 
-  function all(){
-    document.querySelector('#mydata').style.display="block";
-    document.querySelector('#history').style.display="block";
-    document.querySelector('#md').style.fontWeight="normal";
-    document.querySelector('#his').style.fontWeight="normal";
+  function first(){
+    document.querySelector('#his').style.fontWeight='normal';
+    document.querySelector('#md').style.fontWeight='normal';
+    document.querySelector('#hello').style.display="block";
+    document.querySelector('#mydata').style.display="none";
+    document.querySelector('#history').style.display="none";
   }
 
   function update(){
@@ -447,25 +490,34 @@
     });
   }
 
+  function getOffset(el) {
+    const rect = el.getBoundingClientRect();
+    return {
+      top: rect.top + window.scrollY
+    };
+  }
 
   window.onwheel = e => {
-    if(e.deltaY >= 1){
+    if (e.deltaY >= 138) {
       // Scrolling Down with mouse
 
       document.querySelector('.sidenav').style.top = '0';
       document.querySelector('#open').style.top = '7px';
       document.querySelector('#close').style.top = '17px';
-    } else if (e.deltaY < 1){
+    } else if (e.deltaY < 138) {
       // Scrolling Up with mouse
-
-      document.querySelector('.sidenav').style.top='138px';
-      document.querySelector('#open').style.top = '145px';
-      document.querySelector('#close').style.top = '155px';
-
+      if (getOffset(document.querySelector('.sidenav')).top < '138'){
+        document.querySelector('.sidenav').style.top = '138px';
+        document.querySelector('#open').style.top = '145px';
+        document.querySelector('#close').style.top = '155px';
+      }
+      else{
+        document.querySelector('.sidenav').style.top = '0';
+        document.querySelector('#open').style.top = '7px';
+        document.querySelector('#close').style.top = '17px';
+      }
     }
   }
-
-
 
 </script>
 
