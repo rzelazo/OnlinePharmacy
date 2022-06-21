@@ -328,32 +328,6 @@ $('#max-price').on("change mousemove", function () {
       $('#max-price-txt').text(max_price + ' zł');
 });
 
-function filterByPrice() {
-  print('elo')
-    let url = 'core/price-filtered/';
-
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/json',
-            'X-CSRFToken': csrftoken
-        },
-        body: JSON.stringify({'min_price': min_price, 'max_price' : max_price})
-    })
-
-        .then((response) => {
-            return response.json()
-        })
-
-        .then((data) => {
-            console.log('data:', data)
-            location.reload()
-        })
-    }
-
-
-
-
 
 </script>
 {% endblock extra_scripts %}
