@@ -1,5 +1,14 @@
 # OnlinePharmacy
 
+## Żeby wyświetlała się nasza stronka błędu zamiast domyślnej strony błędu debuga trzeba wyłączyć tryb debug:
+1. W OnlinePharmacy/settings.py trzeba zmienić wartość zmiennej DEBUG:
+```
+DEBUG = False
+```
+2. Serwer trzeba odpalać inną komendą
+```
+python manage.py runserver --insecure
+```
 ## Jak odpalić:
 - trzeba mieć zainstalowany Pytong
 - pobieramy repo
