@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block head_title %}
+Błąd
+{% endblock head_title %}
+
+{% block extra_head %}
+<style>
+    #error {
+        padding-top: 5%;
+        max-width: 20%;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        block-size: auto;
+    }
+
+    .home {
+        width: 100%;
+        font-size: 18px;
+        color: black !important;
+        border: solid 2px #C0EDA6;
+        border-radius: 30px;
+        margin-top: 60px;
+        margin-bottom: 40px;
+        padding: 10px 30px 10px 30px;
+    }
+
+    .home:hover {
+        background-color: #C0EDA6 !important;
+        color: white !important;
+    }
+
+    .button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container justify-content-center">
+    <div style="align-items: center;">
+        <img id="error" src="/static/img/error.png" />
+    </div>
+    <h3 class="text-center" style="padding-top: 10px;">Coś poszło nie tak...</h3>
+    <div class="button">
+        <form action="/">
+            <input type="submit" class="home" value="Wróć na stronę główną" />
+        </form>
+    </div>
+</div>
+
+
+{% block extra_scripts %}
+
+{% endblock extra_scripts %}
+{% endblock content %}
