@@ -7,7 +7,7 @@ class AddItemToCartForm(forms.Form):
     n_pieces = forms.IntegerField(min_value=1, max_value=99, initial=1)
 
 
-class CheckoutForm(forms.ModelForm):
+class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = "__all__"
@@ -21,12 +21,17 @@ class CheckoutForm(forms.ModelForm):
         }
 
 
-class CustomerForm(forms.ModelForm):
-
+class NoLabelsModelForm(forms.ModelForm):
+    """
+    Base class for ModelForm without field labels.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for fieldname in self.Meta.fields:
             self.fields[fieldname].help_text = None
+
+
+class CustomerForm(NoLabelsModelForm):
 
     class Meta:
         model = Customer
@@ -54,10 +59,6 @@ class EmailForm(forms.ModelForm):
 
 
 class CustomerCheckoutForm(CustomerForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for fieldname in self.Meta.fields:
-            self.fields[fieldname].help_text = None
 
     class Meta:
         model = Customer
@@ -69,3 +70,10 @@ class CustomerCheckoutForm(CustomerForm):
             "last_name": "Nazwisko",
             "phone_number": "Numer telefonu",
         }
+
+
+class OrderMethodsForm(NoLabelsModelForm):
+
+    class Meta:
+        model = Order
+        fields = ["delivery_method", "payment_method"]

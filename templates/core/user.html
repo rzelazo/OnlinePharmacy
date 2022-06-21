@@ -241,7 +241,7 @@
 
     <div class="box">
       <button type="button" id="edit" onclick="update()">Edytuj dane</button>
-      <a id="back" onclick="back()"><i class="fa-solid fa-arrow-left"></i>
+      <a id="back" onclick="back()" style="cursor: pointer"><i class="fa-solid fa-arrow-left"></i>
         <label>Wróć</label>
       </a>
       <!--<button type="button" id="back" onclick="back()">Wróć</button>-->
@@ -317,6 +317,12 @@
       <br>
       <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px">Data: </label>
         <label style="margin-left: 2%">{{order.date}}</label>
+      <br>
+      <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px">Metoda dostawy: </label>
+        <label style="margin-left: 2%;">{{order.get_delivery_method_display}}</label>
+      <br>
+      <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px">Metoda płatności: </label>
+        <label style="margin-left: 2%">{{order.get_payment_method_display}}</label>
       <br>
       {% if order.get_status_display == 'Oczekiwanie na zapłatę' %}
       <label style="font-weight: bold; font-size: 18px; letter-spacing: 1px">Status: </label>

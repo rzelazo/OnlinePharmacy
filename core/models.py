@@ -154,12 +154,14 @@ class Customer(models.Model):
     first_name = models.CharField(max_length=30, help_text="Customer's first name")
     second_name = models.CharField(max_length=30, null=True, blank=True, help_text="Customer's second name")
     last_name = models.CharField(max_length=30, help_text="Customer's last name")
-    date_of_birth = models.DateField(validators=[validate_date], help_text="Customer's date of birth", null=True, blank=True)
+    date_of_birth = models.DateField(validators=[validate_date], help_text="Customer's date of birth", null=True,
+                                     blank=True)
     phone_number = models.CharField(max_length=9, validators=[validate_phone_number],
                                     help_text="Customer's phone number")
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, help_text="Customer's gender", null=True, blank=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, help_text="Customer's gender", null=True,
+                              blank=True)
     user = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                             help_text="User account associated with this customer", null=True, blank=True)
+                                help_text="User account associated with this customer", null=True, blank=True)
 
     address = models.ForeignKey(to="Address", on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -185,17 +187,46 @@ class Order(models.Model):
         (CANCELLED, 'Anulowano')
     )
 
+    DHL = 'dhl'
+    INPOST = 'inpost'
+    SELF_PICKUP = 'self-pickup'
+
+    DELIVERY_METHOD_CHOICES = (
+        (DHL, "Kurier DHL"),
+        (INPOST, "Paczkomaty inPost"),
+        (SELF_PICKUP, "Odbiór osobisty")
+    )
+
+    DIRECT_PAYMENT = "dp"
+    CARD = "card"
+    BLIK = "blik"
+
+    PAYMENT_METHOD_CHOICES = (
+        (DIRECT_PAYMENT, "Przelew"),
+        (CARD, "Karta płatnicza"),
+        (BLIK, "BLIK")
+    )
+
     date = models.DateTimeField(auto_now_add=True)
 
     status = models.CharField(choices=STATUS_CHOICES, max_length=max(len(s[0]) for s in STATUS_CHOICES),
                               help_text="The current status of the order", default=AWAITING_PAYMENT, blank=True)
 
+    delivery_method = models.CharField(choices=DELIVERY_METHOD_CHOICES,
+                                       max_length=max(len(s[0]) for s in DELIVERY_METHOD_CHOICES),
+                                       help_text="Delivery method chosen by the customer", default=DHL)
+
+    payment_method = models.CharField(choices=PAYMENT_METHOD_CHOICES,
+                                      max_length=max(len(s[0]) for s in PAYMENT_METHOD_CHOICES),
+                                      help_text="Payment method chosen by the customer", default=DIRECT_PAYMENT)
+
     items = models.ManyToManyField(to='Item', through='OrderItem', help_text="Items that the order comprises")
 
-    total_price = models.DecimalField(max_digits=7, decimal_places=2, default=0.00, help_text="Total price of the order")
+    total_price = models.DecimalField(max_digits=7, decimal_places=2, default=0.00,
+                                      help_text="Total price of the order")
 
     customer = models.ForeignKey(to="Customer", on_delete=models.CASCADE,
-                             help_text="Customer that have made this order")
+                                 help_text="Customer that have made this order")
 
     address = models.ForeignKey(to="Address", on_delete=models.CASCADE)
 

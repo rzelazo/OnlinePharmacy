@@ -239,15 +239,17 @@ class CheckoutView(View):
             if hasattr(user.customer, "address"):
                 customer_address = user.customer.address
                 # pre-fill the checkout form with address bound to the customer (e.g. address used by the last checkout)
-                form = CheckoutForm(instance=customer_address)
+                form = AddressForm(instance=customer_address)
             else:
-                form = CheckoutForm()
+                form = AddressForm()
         else:
-            form = CheckoutForm()
+            form = AddressForm()
             customerForm = CustomerCheckoutForm()
 
+        orderMethodsForm = OrderMethodsForm()
+
         context = {"cart_item_list": cart_item_list, "total_price": total_price, "form": form,
-                   "customerForm": customerForm}
+                   "customerForm": customerForm, "orderMethodsForm": orderMethodsForm}
         return render(request, template_name=self.template_name, context=context)
 
     def post(self, request):
@@ -258,9 +260,9 @@ class CheckoutView(View):
         if cart_created or len(cart_item_list) < 1:
             raise Http404("Koszyk jest pusty!")
 
-        form = CheckoutForm(data=request.POST)
-
-        if form.is_valid():
+        form = AddressForm(data=request.POST)
+        orderMethodsForm = OrderMethodsForm(data=request.POST)
+        if form.is_valid() and orderMethodsForm.is_valid():
             if hasattr(user, 'customer'):
                 customer = user.customer
             else:
@@ -271,7 +273,7 @@ class CheckoutView(View):
                     total_price = calc_total_price(cart_item_list)
                     return render(request, template_name=self.template_name,
                                   context={'cart_item_list': cart_item_list, 'total_price': total_price, 'form': form,
-                                           'customerForm': customerForm})
+                                           'customerForm': customerForm, "orderMethodsForm": orderMethodsForm})
 
             user = request.user
             address, address_created = Address.objects.get_or_create(**form.cleaned_data)
@@ -280,7 +282,9 @@ class CheckoutView(View):
                 customer.user = user
             customer.save()
 
-            order = Order.objects.create(address=address, customer=customer)
+            order = Order.objects.create(address=address, customer=customer,
+                                         delivery_method=orderMethodsForm.cleaned_data.get("delivery_method"),
+                                         payment_method=orderMethodsForm.cleaned_data.get("payment_method"))
 
             ordered_items = [OrderItem(order=order, item=cart_item.item, n_pieces=cart_item.n_pieces)
                              for cart_item in cart_item_list]
@@ -318,7 +322,7 @@ class CheckoutView(View):
             customerForm = CustomerCheckoutForm()
             return render(request, template_name=self.template_name,
                           context={'cart_item_list': cart_item_list, 'total_price': total_price, 'form': form,
-                                   'customerForm': customerForm})
+                                   'customerForm': customerForm, "orderMethodsForm": orderMethodsForm})
 
 
 class UserView(View):
