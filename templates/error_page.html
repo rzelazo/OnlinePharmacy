@@ -5,6 +5,7 @@ Błąd
 {% endblock head_title %}
 
 {% block extra_head %}
+
 <style>
     #error {
         padding-top: 5%;
@@ -43,7 +44,8 @@ Błąd
 {% block content %}
 <div class="container justify-content-center">
     <div style="align-items: center;">
-        <img id="error" src="/static/img/error.png" />
+        {% load static %}
+        <img id="error" src="{% static 'img/error.png' %}" alt="error.png"/>
     </div>
     <h3 class="text-center" style="padding-top: 10px;">Coś poszło nie tak...</h3>
     <div class="button">

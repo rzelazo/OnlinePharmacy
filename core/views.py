@@ -178,7 +178,7 @@ class CategoryFilteredView(View):
         """
         Filter items on subcategory id.
         """
-        category_name = SubCategory.objects.get(pk=pk).name
+        category_name = get_object_or_404(SubCategory, pk=pk).name
         context = {'category_name': category_name}
 
         min_price = request.session.pop('min_price', False)
@@ -371,3 +371,4 @@ class UserView(View):
             orders = Order.objects.filter(customer__user=user).order_by("-date")
             context = {"user": user, "customer": customer, "customer_form": customer_form, "orders": orders}
             return render(request, template_name="core/user.html", context=context)
+
