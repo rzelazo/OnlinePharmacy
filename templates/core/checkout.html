@@ -114,9 +114,9 @@ Checkout
 <div class="row justify-content-around">
   <form class="col" action="" method="post">
     {% csrf_token %}
-    <div class="row justify-content-around" style="margin: auto;">
+    <div class="row d-flex justify-content-around">
+      {% if not user.customer %}
       <div class="col-lg-4 d-flex justify-content-center">
-        {% if not user.customer %}
         <fieldset>
           <legend>Proszę podać dane klienta</legend>
           <table>
@@ -135,8 +135,8 @@ Checkout
       </div>
       <div class="col-lg-4 d-flex justify-content-center">
           <fieldset>
-            <legend>Proszę podać metody dostawy i płatności</legend>
-            <table>
+            <legend style="text-align: center;">Proszę podać metody dostawy i płatności</legend>
+            <table class="d-flex justify-content-center">
               {{ orderMethodsForm.as_table }}
             </table>
           </fieldset>
