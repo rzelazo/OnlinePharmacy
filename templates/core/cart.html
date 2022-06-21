@@ -141,13 +141,13 @@
         <strong>{{ cart_item.n_pieces }} szt.</strong>
       </div>
       <div class="col">
-        <p >            
+                 
           {% if cart_item.item.price_sale %}
-          <del style="font-size: 16px;">{{ cart_item.item.price }} zł  </del>
-            <strong style="padding-left:10px; font-size:18px;">{{ cart_item.item.price_sale }} zł</strong>
+          <p><del style="font-size: 16px;">{{ cart_item.item.price }} zł  </del>
+            <strong style="padding-left:10px; font-size:18px;">{{ cart_item.item.price_sale }} zł</strong> </p>
         {% else %}
          <strong> {{ cart_item.item.price }} zł </strong>
-        {% endif %}</p>
+        {% endif %}
       </div>
 
       <div class="col ">
