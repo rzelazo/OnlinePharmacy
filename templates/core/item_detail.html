@@ -147,6 +147,7 @@ Item detail
         style="width: 65%; padding-top:40px; filter: grayscale(); opacity: 0.8;">
     </div>
     {% else %}
+    <p id="stock" style="display: none;">{{ item.in_stock }}</p>
     <div class="col" >
       <img src="{{ item.image.url }}" alt="item_image" style="width: 65%; padding-top:40px">
     </div>
@@ -237,12 +238,13 @@ Item detail
 <script>
   const plus = document.querySelector(".plus"),
     minus = document.querySelector(".minus"),
-    num = document.querySelector(".num");
+    num = document.querySelector(".num"),
+    stock = document.getElementById("stock").textContent
 
   let a = 1;
 
   plus.addEventListener("click", () => {
-    if (a <= 99) {
+    if (a < parseInt(stock)) {
       a++;
       num.innerText = a;
       document.getElementById("id_n_pieces").value = a;
