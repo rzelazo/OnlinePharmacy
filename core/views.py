@@ -176,13 +176,15 @@ class CategoryFilteredView(View):
 
     def get(self, request, pk):
         """
-        Filter items on subcategory id.
+        Filter items on subcategory id and price range.
         """
         category_name = get_object_or_404(SubCategory, pk=pk).name
         context = {'category_name': category_name}
 
-        min_price = request.session.pop('min_price', False)
-        max_price = request.session.pop('max_price', False)
+        min_price = request.GET.get('min-price', False)
+        max_price = request.GET.get('max-price', False)
+        logging.debug(min_price)
+        logging.debug(max_price)
         if min_price and max_price:
             # if user selected the minimal and maximal product price -> filter product list by subcategory and price range
             item_list = Item.objects.filter(
@@ -204,22 +206,6 @@ class CategoryFilteredView(View):
         context['item_list'] = item_list
 
         return render(request, self.template_name, context=context)
-
-    def post(self, request, pk):
-        """
-        Takes user input for filtering item list by price range.
-        """
-        min_price = request.POST.get('min-price', False)
-        max_price = request.POST.get('max-price', False)
-
-        if min_price and max_price:
-            request.session['min_price'] = min_price
-            request.session['max_price'] = max_price
-            return redirect(request.path)
-
-        else:
-            messages.add_message(request, level=messages.WARNING, message="Błąd filtrowania produktów")
-            return redirect(request.path)
 
 
 class CheckoutView(View):

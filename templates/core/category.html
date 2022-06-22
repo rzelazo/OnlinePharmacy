@@ -206,8 +206,7 @@
         <hr>
         <h5 style="padding-left: 5%;">CENA:</h5>
         <div class="card-body">
-          <form id="price-range-form" method="post" action="">
-            {% csrf_token %}
+          <form id="price-range-form" method="get" action="">
             <label for="min-price" class="form-label">Cena minimalna: </label>
             <span id="min-price-txt" style="font-weight: bold;">{{ min_price }} zł</span>
             <input type="range" class="form-range" min="0" max='99' id="min-price" step="1" value="{{ min_price }}" name="min-price">
