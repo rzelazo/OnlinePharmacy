@@ -6,39 +6,55 @@ Płatność
 
 {% block extra_head %}
 <style>
-h1{
-    font-size: 40px;
-    text-align: center;
-    padding-top: 40px;
-}
-h2{
-    font-size: 20px;
-    text-align: center;
-    padding-top: 30px;
-    padding-bottom: 10px;
-}
-h3{
-    font-size: 20px;
-    text-align: center;
-    padding-top: 10px;
-}
-h4{
-    font-size: 20px;
-    text-align: center;
-    padding-top: 10px;
-}
+    #error {
+        padding-top: 5%;
+        max-width: 20%;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        block-size: auto;
+    }
 
+    .home {
+        width: 100%;
+        font-size: 18px;
+        color: black !important;
+        border: solid 2px #C0EDA6;
+        border-radius: 30px;
+        margin-top: 60px;
+        margin-bottom: 40px;
+        padding: 10px 30px 10px 30px;
+    }
 
+    .home:hover {
+        background-color: #C0EDA6 !important;
+        color: white !important;
+    }
 
+    .button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 
-<h1>Dziękujemy za skorzystanie z naszej apteki!</h1>
-<h2> Aby zamówienie zostało zrealizowane, prosimy o jak najszybsze wykonanie przelewu na poniższe dane:</h2>
-<h3>Odbiorca:e-Apteka Spółka prywatna zespół PAINT</h3>
-<h4>Numer konta: 25 1256 6695 4587 2366 2210 0256</h4>
+<div class="container justify-content-center">
+    <div style="align-items: center;">
+        {% load static %}
+        <img id="error" src="{% static 'img/happy.png' %}" alt="happy.png"/>
+    </div>
+    <h2 class="text-center" style="padding-top: 10px;">Dziękujemy za skorzystanie z naszej apteki!</h2>
+    <div class="button">
+        <form action="/">
+            <input type="submit" class="home" value="Wróć na stronę główną" />
+        </form>
+    </div>
+</div>
+
 
 {% endblock content %}
 

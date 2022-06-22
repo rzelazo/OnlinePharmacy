@@ -127,8 +127,8 @@ def validate_date(date):
 
 
 PHONE_NUMBER_VALIDATION_ERRORS = {
-    'len_error': ValidationError('Phone number must be exactly 9 digits', code='len_error'),
-    'not_digits_error': ValidationError('Phone number must contain only digits!', code='not_digits_error')
+    'len_error': ValidationError('Numer telefonu musi składać się dokładnie z 9 cyfr', code='len_error'),
+    'not_digits_error': ValidationError('Numer telefonu musi zawierać wyłącznie cyfry', code='not_digits_error')
 }
 
 
