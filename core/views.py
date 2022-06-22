@@ -12,6 +12,7 @@ from django.http import Http404
 from django.utils.html import escape
 from django.conf import settings
 from django.db.models import Q
+from django.contrib.auth.mixins import LoginRequiredMixin
 import logging
 
 
@@ -174,8 +175,12 @@ class CategoryFilteredView(View):
 
         min_price = request.GET.get('min-price', False)
         max_price = request.GET.get('max-price', False)
-        logging.debug(min_price)
-        logging.debug(max_price)
+        try:
+            min_price = int(min_price)
+            max_price = int(max_price)
+        except ValueError:
+            raise Http404("Błędne wartości parametrów zapytania")
+
         if min_price and max_price:
             # if user selected the minimal and maximal product price -> filter product list by subcategory and price range
             item_list = Item.objects.filter(
@@ -315,7 +320,7 @@ class CheckoutView(View):
                                    'customerForm': customerForm, "orderMethodsForm": orderMethodsForm})
 
 
-class UserView(View):
+class UserView(LoginRequiredMixin ,View):
 
     def get(self, request):
         """
