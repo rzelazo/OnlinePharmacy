@@ -1,6 +1,33 @@
 # OnlinePharmacy
 
-## Wymagane technologie
+## Postawiona, działająca strona z aplikacją dostępna jest pod adresem:
+https://blachotrapez.pythonanywhere.com/
+
+### Strona logowania:
+![image](https://user-images.githubusercontent.com/62251572/175108427-ebaf8cbb-f4cc-477a-b8fd-f6cc1aa32d2a.png)
+
+Żeby sie zalogować jako admin:  
+##### Username:  
+```
+admin
+```
+##### Password: 
+```
+haslo1234
+```
+
+Żeby się zalogować jako user:
+##### Username:  
+```
+grzegorz
+```
+##### Password: 
+```
+haslo1234
+```
+
+## Jeśli chcemy uruchomić serwer samodzielnie: 
+### Wymagane technologie
 - [Python 3.9](https://www.python.org/downloads/release/python-390/)
 - [Django 3.2.5](https://pypi.org/project/Django/3.2.5/)
 - [SQLite3](https://www.sqlite.org/index.html)
@@ -12,7 +39,7 @@ Generalnie wystarczy sam [Python](https://www.python.org/) i [pip](https://pypi.
 pip install -r requirements.txt
 ```
 
-## Jak odpalić:
+### Jak uruchomić:
 - klonujemy repozytorium
 - wchodzimy do folderu root projektu: OnlinePharmacy (konsole odpalamy w folderze, w którym są podfoldery: core, media, OnlinePharmacy, static oraz pliki manage.py i requirements.txt)
 
@@ -39,28 +66,6 @@ python manage.py runserver
 - Żeby wejść na strone w wyszukiwarke wpisujemy adres serwera, który wyświetlił się w konsoli
 ```
 http://127.0.0.1:8000/
-```
-### Strona logowania:
-![image](https://user-images.githubusercontent.com/62251572/175108427-ebaf8cbb-f4cc-477a-b8fd-f6cc1aa32d2a.png)
-
-Żeby sie zalogować jako admin:  
-##### Username:  
-```
-admin
-```
-##### Password: 
-```
-haslo1234
-```
-
-Żeby się zalogować jako user:
-##### Username:  
-```
-grzegorz
-```
-##### Password: 
-```
-haslo1234
 ```
 
 ## Żeby wyświetlała się nasza strona błędu zamiast domyślnej strony błędu debuga należy wyłączyć tryb debug:
