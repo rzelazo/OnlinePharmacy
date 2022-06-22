@@ -209,6 +209,10 @@ class CategoryFilteredView(View):
 
 
 class CheckoutView(View):
+    """
+    Checkout view for finalizing the order.
+    """
+
     template_name = "core/checkout.html"
 
     def get(self, request):
@@ -246,14 +250,22 @@ class CheckoutView(View):
         if cart_created or len(cart_item_list) < 1:
             raise Http404("Koszyk jest pusty!")
 
+        # assign None to necessary variables
+        customer = customerForm = customerForm_valid = None
+
+        if hasattr(user, 'customer'):
+            # if user is already a customer -> retrieve customer bound to the user from the database
+            customer = user.customer
+        else:
+            # if user is not a customer yet (or the user is not logged in) -> use the CustomerCheckoutForm
+            customerForm = CustomerCheckoutForm(data=request.POST)
+            customerForm_valid = customerForm.is_valid()
+
         form = AddressForm(data=request.POST)
         orderMethodsForm = OrderMethodsForm(data=request.POST)
         if form.is_valid() and orderMethodsForm.is_valid():
-            if hasattr(user, 'customer'):
-                customer = user.customer
-            else:
-                customerForm = CustomerCheckoutForm(data=request.POST)
-                if customerForm.is_valid():
+            if not customer:
+                if customerForm_valid:
                     customer, customer_created = Customer.objects.get_or_create(**customerForm.cleaned_data)
                 else:
                     total_price = calc_total_price(cart_item_list)
@@ -261,7 +273,6 @@ class CheckoutView(View):
                                   context={'cart_item_list': cart_item_list, 'total_price': total_price, 'form': form,
                                            'customerForm': customerForm, "orderMethodsForm": orderMethodsForm})
 
-            user = request.user
             address, address_created = Address.objects.get_or_create(**form.cleaned_data)
             customer.address = address
             if user.is_authenticated:
@@ -304,8 +315,10 @@ class CheckoutView(View):
 
         # if form is invalid, show errors to the user
         else:
+            if customerForm is None:
+                customerForm = CustomerCheckoutForm()
             total_price = calc_total_price(cart_item_list)
-            customerForm = CustomerCheckoutForm()
+            messages.add_message(request, level=messages.WARNING, message=f"Proszę poprawić błędy w formularzu zamówienia")
             return render(request, template_name=self.template_name,
                           context={'cart_item_list': cart_item_list, 'total_price': total_price, 'form': form,
                                    'customerForm': customerForm, "orderMethodsForm": orderMethodsForm})
@@ -315,7 +328,7 @@ class UserView(View):
 
     def get(self, request):
         """
-        GET method allows for displaying and editing the customer's personal data,
+        GET method allows for displaying the form for editing the customer's personal data,
         as well as for viewing the user's history of transactions.
         """
         user = request.user
@@ -361,4 +374,3 @@ class UserView(View):
             orders = Order.objects.filter(customer__user=user).order_by("-date")
             context = {"user": user, "customer": customer, "customer_form": customer_form, "orders": orders}
             return render(request, template_name="core/user.html", context=context)
-
