@@ -189,12 +189,12 @@ class Order(models.Model):
 
     DHL = 'dhl'
     INPOST = 'inpost'
-    SELF_PICKUP = 'self-pickup'
+    POST = 'poczta_polska'
 
     DELIVERY_METHOD_CHOICES = (
         (DHL, "Kurier DHL"),
         (INPOST, "Paczkomaty inPost"),
-        (SELF_PICKUP, "Odbiór osobisty")
+        (POST, "Poczta Polska")
     )
 
     DIRECT_PAYMENT = "dp"
