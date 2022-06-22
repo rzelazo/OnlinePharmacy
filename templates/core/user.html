@@ -5,6 +5,11 @@
 
 {% block extra_head%}
 <style>
+  html, body{
+    height: 100%;
+    width: 100%;
+  }
+
   .wrapper{
     display: flex;
 
@@ -22,6 +27,8 @@
     text-decoration: none;
     z-index: 1;
     transition: all 0.5s ease;
+    max-width: 100%;
+    max-height: 100%;
 
   }
   .sidenav li{
@@ -58,6 +65,8 @@
     border: solid 2px #C0EDA6;
     border-radius: 20px;
     height: 500px;
+    max-width: 100%;
+    max-height: 100%;
   }
 
 
@@ -65,11 +74,15 @@
     margin-top: 2%;
     margin-left: 5%;
     font-size: 20px;
+    max-width: 100%;
+    max-height: 100%;
   }
   .data-table{
     margin-bottom: 5%;
     margin-top: 3%;
     width: 1040px;
+    max-width: 100%;
+    max-height: 100%;
 
   }
   .data-table thead tr{
@@ -168,6 +181,8 @@
     margin-top: 2%;
     min-height: 500px;
     position: relative;
+    max-width: 100%;
+    max-height: 100%;
   }
 
   #head{
@@ -178,13 +193,18 @@
   }
   #table{
     margin-left: 5%;
+    max-width: 100%;
+    max-height: 100%;
   }
 
   #table td{
     width: 300px;
     height:50px;
+    max-width: 100%;
+    max-height: 100%;
   }
   #edit{
+    float: right;
     margin-top: 1%;
     margin-left: 82%;
     font-size: 18px;
@@ -195,6 +215,8 @@
     height: 33px;
     border-radius: 30px;
     background-color: transparent;
+    max-width: 100%;
+    max-height: 100%;
   }
   #edit:hover {
     background-color: #FFB085 !important;
@@ -202,21 +224,28 @@
   }
   #back{
     margin-top: 1%;
-    margin-left: 93%;
-    font-size: 18px;;
+    font-size: 18px;
     display: none;
+    max-width: 90%;
+    max-height: 100%;
+    float: right;
+
   }
 
   .update{
     display: none;
+    max-width: 90%;
+    max-height: 100%;
   }
   .newdata{
     margin-top: 3%;
     margin-left: 3%;
     height: 300px;
     width: 700px;
-    font-size: 20px;
+    font-size: 19px;
     letter-spacing: 1px;
+    max-width: 100%;
+    max-height: 100%;
   }
 
 
@@ -227,7 +256,7 @@
 {% block content %}
 <body id="body" onscroll="speed()">
 
-<div class="wrapper" style="height: fit-content">
+<div class="wrapper" style="max-width: 100%; max-height: 100%;">
   <input type="checkbox" id="check">
   <label for="check">
     <i class="fas fa-bars" id="open"></i>
@@ -249,7 +278,8 @@
   </div>
 </div>
 
-<div class="content" style="position: relative;">
+<div class="content" style="position: relative; max-width: 100%;
+        max-height: 100%;">
 
   <div id="hello">
     <h1 id="head">Mój profil</h1>
@@ -263,23 +293,26 @@
     <label style="font-size: 20px; color: #1d1daa"> przyjęto do realizacji</label><label style="font-size: 20px">! </label>
     <br>
     {% elif order.get_status_display == 'Wysłano'%}
-    <label style="margin-top: 1%; font-size: 20px">Twoje zamówienie o numerze #{{order.id}} jest już w drodze!</label>
+    <label style="margin-top: 1%; font-size: 20px; position: absolute">Twoje zamówienie o numerze #{{order.id}} jest już w drodze!</label>
     <br>
     {% endif %}
     {% endfor %}
-    <div style="position:absolute; bottom: 3%">
+    <div style="margin-top:15%; margin-bottom: 2%; max-width: 100%;
+        max-height: 100%;">
       <label style="font-size: 16px;">Szczegóły wszystkich zamówień znajdziesz w zakładce </label>
       <label style="font-size: 21px; font-weight: bold; color: #C0EDA6; letter-spacing: 1px">Historia zamówień</label><label>.</label>
     </div>
   </div>
 
-  <div id="mydata" class="data" style="margin-left: 17%;  margin-bottom:5%; height: 800px; display: none" >
+  <div id="mydata" class="data" style="margin-left: 17%;  margin-bottom:5%; height: 800px; display: none; max-width: 100%;
+        max-height: 100%; " >
     <h1 style="margin-top: 3%; letter-spacing: 1px; font-size: 50px; color: #C0EDA6;
             padding: 0 0 15px 0; border-bottom: 1px solid #FFB085;">Moje dane</h1>
 
     <div class="box">
       <button type="button" id="edit" onclick="update()">Edytuj dane</button>
-      <a id="back" onclick="back()" style="cursor: pointer"><i class="fa-solid fa-arrow-left"></i>
+      <a id="back" onclick="back()" style="cursor: pointer; max-width: 100%;
+    max-height: 100%;"><i class="fa-solid fa-arrow-left"></i>
         <label>Wróć</label>
       </a>
       <!--<button type="button" id="back" onclick="back()">Wróć</button>-->
@@ -330,7 +363,7 @@
       </table>
 
 
-      <form action="" method="post" class="update">
+      <form method="post" class="update">
         {% csrf_token %}
         <table class="newdata">
 
@@ -344,7 +377,8 @@
     </div>
   </div>
 
-  <div id="history" class="data" style="margin-left: 17%; display: none">
+  <div id="history" class="data" style="margin-left: 17%; display: none; max-width: 100%;
+        max-height: 100%;">
     <h1 style="margin-top: 3%; letter-spacing: 1px; font-size: 50px; color: #C0EDA6;
             padding: 0 0 15px 0; border-bottom: 1px solid #FFB085">Historia zamówień</h1>
     {% for order in orders %}
