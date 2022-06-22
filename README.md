@@ -1,10 +1,11 @@
 # OnlinePharmacy
 
 ## Wymagane technologie
-- [Python 3](https://www.python.org/downloads/release/python-390/)
+- [Python 3.9](https://www.python.org/downloads/release/python-390/)
 - [Django 3.2.5](https://pypi.org/project/Django/3.2.5/)
 - [SQLite3](https://www.sqlite.org/index.html)
-- [django-allauth](https://django-allauth.readthedocs.io/en/latest/installation.html)
+- [django-allauth 0.50.0](https://django-allauth.readthedocs.io/en/latest/installation.html)
+- [python-decouple 3.6](https://pypi.org/project/python-decouple/3.6)
 
 Generalnie wystarczy sam [Python](https://www.python.org/) i [pip](https://pypi.org/project/pip/), reszta zależności dociągnięta może zostać za pomocą [pip-a](https://pypi.org/project/pip/) przy wykorzystaniu pliku `requirements.txt`
 ```
