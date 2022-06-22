@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block head_title %}
 Index
@@ -179,19 +180,19 @@ Index
 <div id="carouselExampleInterval" class="carousel slide" data-ride="carousel">
   <div class="carousel-inner">
     <div class="carousel-item active" data-interval="10000">
-      <img src="/static/img/slajd1.jpg" class="d-block w-100" alt="...">
+      <img src="{% static 'img/slajd1.jpg' %}" class="d-block w-100" alt="...">
     </div>
     <div class="carousel-item" data-interval="2000">
-      <img src="/static/img/slajd2.jpg" class="d-block w-100" alt="...">
+      <img src="{% static 'img/slajd2.jpg' %}" class="d-block w-100" alt="...">
     </div>
     <div class="carousel-item">
-      <img src="/static/img/slajd3.png" class="d-block w-100" alt="...">
+      <img src="{% static 'img/slajd3.png' %}" class="d-block w-100" alt="...">
     </div>
     <div class="carousel-item">
-      <img src="/static/img/slajd4.png" class="d-block w-100" alt="...">
+      <img src="{% static 'img/slajd4.png' %}" class="d-block w-100" alt="...">
     </div>
     <div class="carousel-item">
-      <img src="/static/img/slajd5.png" class="d-block w-100" alt="...">
+      <img src="{% static 'img/slajd5.png' %}" class="d-block w-100" alt="...">
     </div>
   </div>
   <a class="left carousel-control-prev" href="#carouselExampleInterval" role="button" data-slide="prev">

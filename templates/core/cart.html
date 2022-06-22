@@ -115,6 +115,7 @@
 {% endblock %}
 
 {% block content %}
+  {% load static %}
 <div class="row" >
   <span  id="links">
     <a class="uppercase" href="{% url 'core:index' %}">Home > </a>
@@ -202,7 +203,7 @@
       Twój koszyk jest pusty! Dodaj do niego produkty, aby rozpocząć składanie zamówienia.
     </div>
     <div class="container d-flex justify-content-center" id="con2">
-      <img src="/static/img/sad_koszyk.png" style="width: 20%; justify-self: center;">
+      <img src="{% static 'img/sad_koszyk.png' %}" style="width: 20%; justify-self: center;" alt="sad_koszyk.png">
     </div>
 
 

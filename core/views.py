@@ -176,10 +176,13 @@ class CategoryFilteredView(View):
         min_price = request.GET.get('min-price', False)
         max_price = request.GET.get('max-price', False)
         try:
-            min_price = int(min_price)
-            max_price = int(max_price)
+            int(min_price)
+            int(max_price)
         except ValueError:
             raise Http404("Błędne wartości parametrów zapytania")
+
+        logging.debug(min_price)
+        logging.debug(max_price)
 
         if min_price and max_price:
             # if user selected the minimal and maximal product price -> filter product list by subcategory and price range
