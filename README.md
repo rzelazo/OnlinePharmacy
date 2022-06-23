@@ -3,29 +3,6 @@
 ## Postawiona, działająca strona z aplikacją dostępna jest pod adresem:
 https://blachotrapez.pythonanywhere.com/
 
-### Strona logowania:
-![image](https://user-images.githubusercontent.com/62251572/175108427-ebaf8cbb-f4cc-477a-b8fd-f6cc1aa32d2a.png)
-
-Żeby sie zalogować jako admin:  
-##### Username:  
-```
-admin
-```
-##### Password: 
-```
-haslo1234
-```
-
-Żeby się zalogować jako user:
-##### Username:  
-```
-grzegorz
-```
-##### Password: 
-```
-haslo1234
-```
-
 ## Jeśli chcemy uruchomić serwer samodzielnie: 
 ### Wymagane technologie
 - [Python 3.9](https://www.python.org/downloads/release/python-390/)
