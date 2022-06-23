@@ -109,26 +109,19 @@ class CartItem(models.Model):
 
 
 DATE_VALIDATION_ERRORS = {
-    'future_date_error': ValidationError(message="Date cannot be from the future!", code='future_date_error'),
-    'too_young_error': ValidationError(message="User must be at least 13 years old!", code='too_young_error')
+    'too_young_error': ValidationError(message="Użytkownik musi mieć ukończone 13 lat", code='too_young_error')
 }
 
 
 def validate_date(date):
     now = timezone.now().date()
-    error_keys = []
-    if date > now:
-        error_keys.append('future_date_error')
     if date > now - timedelta(days=13 * 365):
-        error_keys.append('too_young_error')
-
-    if len(error_keys) > 0:
-        raise ValidationError([DATE_VALIDATION_ERRORS[error_key] for error_key in error_keys])
+        raise DATE_VALIDATION_ERRORS['too_young_error']
 
 
 PHONE_NUMBER_VALIDATION_ERRORS = {
     'len_error': ValidationError('Numer telefonu musi składać się dokładnie z 9 cyfr', code='len_error'),
-    'not_digits_error': ValidationError('Numer telefonu musi zawierać wyłącznie cyfry', code='not_digits_error')
+    'non_digits_error': ValidationError('Numer telefonu musi zawierać wyłącznie cyfry', code='non_digits_error')
 }
 
 
@@ -137,7 +130,7 @@ def validate_phone_number(phone_number):
     if len(phone_number) < 9:
         error_keys.append('len_error')
     if not phone_number.isdigit():
-        error_keys.append('not_digits_error')
+        error_keys.append('non_digits_error')
 
     if len(error_keys) > 0:
         raise ValidationError([PHONE_NUMBER_VALIDATION_ERRORS[error_key] for error_key in error_keys])
@@ -259,15 +252,18 @@ class OrderItem(models.Model):
 
 POSTAL_CODE_PATTERN = re.compile(r'\d{2}-\d{3}')
 
+POSTAL_CODE_VALIDATION_ERRORS = {"wrong_pattern": ValidationError('Kod pocztowy musi mieć format XX-XXX gdzie X to cyfra')}
+CITY_NAME_VALIDATION_ERRORS = {"non_alpha": ValidationError("Nazwa miasta może zawierać wyłącznie litery")}
+
 
 def validate_postal_code(postal_code):
     if POSTAL_CODE_PATTERN.match(postal_code) is None:
-        raise ValidationError('Kod pocztowy musi mieć format XX-XXX gdzie X to cyfra')
+        raise POSTAL_CODE_VALIDATION_ERRORS['wrong_pattern']
 
 
 def validate_city_name(city):
     if not city.isalpha():
-        raise ValidationError("Nazwa miasta może zawierać wyłącznie litery")
+        raise CITY_NAME_VALIDATION_ERRORS['non_alpha']
 
 
 class Address(models.Model):

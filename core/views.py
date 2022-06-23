@@ -360,7 +360,7 @@ class UserView(LoginRequiredMixin ,View):
             customer = user.customer
             customer_form = CustomerForm(instance=customer, data=request.POST)
             email_form = EmailForm(instance=user, data=request.POST)
-            logging.debug(customer)
+            logging.debug(customer.date_of_birth)
         else:
             raise Http404("Klient nie istnieje")
 
@@ -372,4 +372,5 @@ class UserView(LoginRequiredMixin ,View):
         else:
             orders = Order.objects.filter(customer__user=user).order_by("-date")
             context = {"user": user, "customer": customer, "customer_form": customer_form, "orders": orders}
+            messages.add_message(request, level=messages.WARNING, message="Proszę poprawić oznaczone pola formularza")
             return render(request, template_name="core/user.html", context=context)
